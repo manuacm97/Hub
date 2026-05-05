@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-touch-fullscreen" content="yes">
 <meta name="theme-color" content="#0c0c12">
 <title>BetHub</title>
 <link rel="manifest" href="manifest.json">
@@ -16,12 +18,12 @@
 input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 input[type=number]{-moz-appearance:textfield}
 body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,sans-serif;font-size:15px;line-height:1.4;min-height:100vh;padding-bottom:74px;-webkit-font-smoothing:antialiased}
-.hdr{position:sticky;top:0;z-index:100;background:rgba(12,12,18,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
+.hdr{position:sticky;top:0;z-index:100;background:rgba(12,12,18,.95);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
 .hdr-logo{font-size:17px;font-weight:900;color:var(--accent)}
 .hdr-bud{text-align:right}
 .hdr-lbl{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
 .hdr-val{font-size:24px;font-weight:800;letter-spacing:-1px;line-height:1}
-.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(22,22,32,.98);backdrop-filter:blur(12px);border-top:1px solid var(--border);display:flex;height:64px}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(22,22,32,.98);border-top:1px solid var(--border);display:flex;height:64px}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:var(--dim);font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:none;background:none;padding:0;transition:color .2s}
 .nav-btn.on{color:var(--accent)}
 .nav-ico{font-size:20px;line-height:1}
@@ -101,6 +103,15 @@ input:focus,select:focus{border-color:var(--accent);background:var(--s3)}
 .overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.8);display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
 .modal{background:var(--s1);border-radius:var(--r) var(--r) 0 0;padding:20px;width:100%;max-width:560px;border:1px solid var(--border);border-bottom:none;max-height:90vh;overflow-y:auto}
 .mt{font-size:17px;font-weight:800;margin-bottom:14px}
+
+.ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+.ov-card{background:var(--s2);border-radius:var(--rs);padding:11px 13px;border:1px solid var(--border);cursor:pointer;transition:border-color .15s}
+.ov-card:active{border-color:var(--accent)}
+.ov-full{grid-column:1/-1}
+.ov-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.ov-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.ov-num{font-size:22px;font-weight:800;letter-spacing:-.8px;line-height:1.1}
+.ov-sub{font-size:10px;color:var(--muted);margin-top:1px}
 </style>
 </head>
 <body>
@@ -169,18 +180,19 @@ function sRatio(r,n,v){
   const rn=r[v][n],rn1=r[v][n-1];
   return(!rn||!rn1)?1:Math.max(0,1-rn/rn1);
 }
-// Stake corretto per quota reale Q_act ≠ Q_media
-// Formula win-path: S = C × (r[v][n] - r[v-1][n-1]) / ((Q_act-1) × r[v-1][n-1])
-// Matematicamente equivalente a sRatio quando Q_act = Q_media
+// FORMULA CORRETTA del Masaniello con quota variabile:
+// S = C * (r[v][n-1] - r[v-1][n-1]) / (r[v][n-1] + (Q-1) * r[v-1][n-1])
+// Garantisce che WIN e LOSS preservino entrambi lo stesso target T = C * r[v][n]
+// Verifica: con Q=Q_media equivale a sRatio; con Q variabile ricalcola correttamente
 function stakeForQ(r,n,v,C,Qact){
   if(v<=0||n<=0||v>n)return 0;
-  if(n===v)return C; // scommetti tutto
+  if(n===v)return C; // last event: all in
   if(!Qact||Qact<=1)return 0;
-  if(v===0)return 0;
-  const rVN=r[v][n];
-  const rV1N1=(v>=1&&n>=1)?r[v-1][n-1]:1;
-  if(!rVN||!rV1N1||rV1N1<=0)return C*sRatio(r,n,v);
-  return Math.max(0,C*(rVN-rV1N1)/((Qact-1)*rV1N1));
+  const rVN1=r[v][n-1];       // r[v][n-1]
+  const rV1N1=r[v-1][n-1];    // r[v-1][n-1]
+  const denom=rVN1+(Qact-1)*rV1N1;
+  if(!denom||denom<=0)return C*sRatio(r,n,v);
+  return Math.max(0,C*(rVN1-rV1N1)/denom);
 }
 // Recompute cassa from scratch (deterministic)
 function recomp(m){
@@ -203,7 +215,8 @@ function recomp(m){
 function budTot(){
   let t=S.budget.iniziale;
   S.budget.adj.forEach(a=>t+=a.v);
-  S.fb.bets.forEach(b=>{if(b.esito!==null){t-=b.p;if(b.esito==='W')t+=b.p*b.q*.9;}});
+  // Puntata tolta subito; vincita (90%) aggiunta solo se vinta
+  S.fb.bets.forEach(b=>{t-=b.p;if(b.esito==='W')t+=b.p*b.q*.9;});
   return t;
 }
 function rageSaldo(){
@@ -250,6 +263,77 @@ function renderHdr(){
   el.textContent=fe(b);el.className='hdr-val '+(b>=0?'pos':'neg');
 }
 
+
+function buildOverview(){
+  let h='<div style="margin-bottom:4px"><div class="card-lbl" style="margin:14px 0 8px 0">Panoramica</div>';
+  h+='<div class="ov-grid">';
+  for(let idx=0;idx<2;idx++){
+    const m=S.mas[idx];
+    if(m.stato==='config'){
+      h+=`<div class="ov-card" onclick="go('m${idx}')">
+        <div class="ov-head"><span class="ov-lbl">${m.name}</span></div>
+        <div class="ov-num" style="color:var(--dim);font-size:15px">Non avviato</div>
+      </div>`;
+    }else{
+      const{C,W,r}=recomp(m);
+      const played=m.ev.length,nRem=m.p.N-played,vRem=m.p.V-W;
+      const diff=C-m.B0,pct=Math.min(100,played/m.p.N*100);
+      const stkNext=(m.stato==='attivo'&&vRem>0&&nRem>=vRem)?stakeForQ(r,nRem,vRem,C,m.p.Q):0;
+      const lb=m.stato==='attivo'?'sa':m.stato==='finito'?'sf':'sx';
+      const ic=m.stato==='attivo'?'🟢':m.stato==='finito'?'✅':'❌';
+      h+=`<div class="ov-card" onclick="go('m${idx}')">
+        <div class="ov-head"><span class="ov-lbl">${m.name}</span><span class="sbdg ${lb}" style="font-size:9px">${ic}</span></div>
+        <div class="ov-num ${C>=m.B0?'pos':'neg'}">${fe(C)}</div>
+        <div class="ov-sub">${diff>=0?'+':''}${fe(diff)} · ${W}V ${played-W}P</div>
+        <div class="prog-bar" style="margin:5px 0 2px"><div class="prog-fill" style="width:${pct}%;background:${C>=m.B0?'var(--pos)':'var(--accent)'}"></div></div>
+        ${stkNext>0?`<div class="ov-sub">Next: <strong style="color:var(--accent)">${fe(stkNext)}</strong></div>`:''}
+      </div>`;
+    }
+  }
+  h+='</div>';
+  h+='<div class="ov-grid">';
+  const sc=S.sc;
+  if(sc.stato==='config'){
+    h+=`<div class="ov-card ov-full" onclick="go('sc')">
+      <div class="ov-head"><span class="ov-lbl">📈 Scalata</span></div>
+      <div class="ov-num" style="color:var(--dim);font-size:15px">Non avviata</div>
+    </div>`;
+  }else{
+    const C=scCassa(),done=sc.steps.filter(s=>s.esito!==null).length;
+    const pct=done/sc.p.N*100,mult=sc.B0>0?(C/sc.B0):0;
+    const lb=sc.stato==='attivo'?'sa':sc.stato==='finita'?'sf':'sx';
+    const ic=sc.stato==='attivo'?'🟢':sc.stato==='finita'?'✅':'❌';
+    h+=`<div class="ov-card ov-full" onclick="go('sc')">
+      <div class="ov-head"><span class="ov-lbl">📈 Scalata</span><span class="sbdg ${lb}" style="font-size:9px">${ic} ${sc.stato.toUpperCase()}</span></div>
+      <div style="display:flex;align-items:flex-end;gap:14px">
+        <div><div class="ov-num ${C>=sc.B0?'pos':'neg'}">${fe(C)}</div>
+        <div class="ov-sub">${done}/${sc.p.N} step · ×${mult.toFixed(2)}</div></div>
+        <div style="flex:1"><div class="prog-bar" style="margin:0 0 3px"><div class="prog-fill" style="width:${pct}%;background:var(--pos)"></div></div>
+        <div class="ov-sub">Target: ${fe(sc.B0*Math.pow(sc.p.Q,sc.p.N))}</div></div>
+      </div>
+    </div>`;
+  }
+  h+='</div>';
+  const bets=S.fb.bets;
+  const pending=bets.filter(b=>b.esito===null);
+  const won=bets.filter(b=>b.esito==='W'),lost=bets.filter(b=>b.esito==='L');
+  const net=won.reduce((a,b)=>a+b.p*b.q*.9,0)-bets.reduce((a,b)=>a+b.p,0);
+  const pendStk=pending.reduce((a,b)=>a+b.p,0);
+  h+='<div class="ov-grid">';
+  h+=`<div class="ov-card ov-full" onclick="go('fb')">
+    <div class="ov-head"><span class="ov-lbl">🎲 Free Bet</span>${pending.length>0?`<span class="sbdg sa" style="font-size:9px">⏳ ${pending.length} in attesa</span>`:''}</div>`;
+  if(!bets.length){
+    h+=`<div class="ov-num" style="color:var(--dim);font-size:15px">Nessuna scommessa</div>`;
+  }else{
+    h+=`<div style="display:flex;gap:16px;flex-wrap:wrap">
+      <div><div class="ov-num ${net>=0?'pos':'neg'}" style="font-size:20px">${fe(net)}</div><div class="ov-sub">net · ${won.length}V / ${lost.length}P</div></div>
+      ${pendStk>0?`<div><div class="ov-num acc" style="font-size:20px">${fe(pendStk)}</div><div class="ov-sub">in gioco</div></div>`:''}
+    </div>`;
+  }
+  h+=`</div></div></div>`;
+  return h;
+}
+
 // ══════════════════════════════════════════
 //  BUDGET TAB
 // ══════════════════════════════════════════
@@ -268,8 +352,9 @@ function renderBud(){
   if(masAdj.length){const t=masAdj.reduce((s,a)=>s+a.v,0);h+=`<div class="drow"><span class="dl">Mas/Scalata</span><span class="dv ${t>=0?'pos':'neg'}">${fe(t)}</span></div>`;}
   if(rAdj.length){const t=rAdj.reduce((s,a)=>s+a.v,0);h+=`<div class="drow"><span class="dl">Da Rage Bet</span><span class="dv pos">${fe(t)}</span></div>`;}
   if(S.fb.bets.filter(b=>b.esito!==null).length)h+=`<div class="drow"><span class="dl">Free Bet net</span><span class="dv ${fbN>=0?'pos':'neg'}">${fe(fbN)}</span></div>`;
-  h+=`</div>
-  <div class="card">
+  h+=`</div>`;
+  h+=buildOverview();
+  h+=`<div class="card">
     <div class="card-lbl">Impostazioni</div>
     <div class="ig"><label class="ilbl">Budget Iniziale (€)</label><input type="number" id="bInp" value="${S.budget.iniziale}" step="0.01"></div>
     <div class="btn-row">
@@ -292,26 +377,35 @@ function renderBud(){
     ${S.rageBet.log.length?`<div class="sep"></div>${S.rageBet.log.slice().reverse().map(l=>`<div class="trans-item"><span style="font-weight:600">${l.nota}</span><span class="tp">${fe(l.v)}</span></div>`).join('')}`:''}
     </div>`;
   }else{
-    h+=`<div class="rage-lock"><div style="font-size:26px;margin-bottom:6px">🔒</div>
-    <div style="font-weight:800;color:var(--muted);margin-bottom:3px">Rage Bet Fund</div>
-    <div style="font-size:12px;color:var(--dim);margin-bottom:8px">Disponibile quando budget &lt; €10</div>
-    <div style="font-size:15px;color:var(--dim);letter-spacing:.2em">████</div></div>`;
+    h+=`<div style="display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);padding:10px 14px;margin-bottom:10px;opacity:0.5">
+      <span style="font-size:16px">🔒</span>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:700;color:var(--muted)">Rage Bet Fund</div>
+        <div style="font-size:11px;color:var(--dim)">Disponibile quando budget &lt; €10</div>
+      </div>
+      <span style="font-size:12px;color:var(--dim);letter-spacing:.15em">████</span>
+    </div>`;
   }
 
   if(S.budget.adj.length){
-    h+=`<div class="card"><div class="card-lbl">Log</div>
-    ${S.budget.adj.slice().reverse().slice(0,20).map(a=>`<div class="trans-item">
+    const logItems=S.budget.adj.slice().reverse().slice(0,20).map(a=>`<div class="trans-item">
       <span style="font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.desc}</span>
       <span style="font-size:11px;color:var(--muted);padding:0 6px;flex-shrink:0">${fd(a.t)}</span>
       <span class="${a.v>=0?'tp':'tn'}" style="flex-shrink:0">${fe(a.v)}</span>
-    </div>`).join('')}</div>`;
+    </div>`).join('');
+    h+=`<details class="card" style="padding:0;overflow:hidden">
+      <summary style="padding:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;list-style:none;user-select:none">
+        <span class="card-lbl" style="margin-bottom:0">Log Trasferimenti (${S.budget.adj.length})</span>
+        <span style="font-size:11px;color:var(--muted)">▼</span>
+      </summary>
+      <div style="padding:0 14px 14px">${logItems}</div>
+    </details>`;
   }
 
   h+=`<div class="card"><div class="card-lbl">Dati</div>
   <div class="btn-row">
     <button class="btn btn-ghost btn-sm" onclick="expJ()">📤 JSON</button>
     <button class="btn btn-ghost btn-sm" onclick="document.getElementById('impF').click()">📥 Importa</button>
-    <button class="btn btn-ghost btn-sm" onclick="expC()">📊 CSV</button>
   </div><input type="file" id="impF" accept=".json" style="display:none" onchange="impJ(event)">
   </div><div style="height:16px"></div>`;
   document.getElementById('ct-bud').innerHTML=h;
@@ -417,66 +511,80 @@ function renderMas(idx){
 }
 
 function masTable(idx,m,r,cassaFin,winsTotal){
+  // cassaFin = cassa corrente da recomp() - CORRETTA (dipende dalle quote reali)
+  // winsTotal = wins totali da recomp()
+  const isA=m.stato==='attivo';
+  const nextIdx=m.ev.length;
+  let W=0; // per calcolare vR delle righe future
+
   let h=`<div class="card"><div class="card-lbl">Tabella Giocate</div>
+  <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Modifica quota → stake aggiornato. ✏️ per annullare e reinserire una giocata.</div>
   <div class="tbl-wrap"><table class="tbl">
   <thead><tr><th>#</th><th>Quota</th><th>Stake</th><th>Vincita</th><th>Cassa</th><th>Esito</th></tr></thead>
   <tbody>`;
 
-  // Rebuild state step by step for display
-  let C=m.B0,W=0;
-  const isA=m.stato==='attivo';
-  const nextIdx=m.ev.length; // index of next event to register
-
   for(let i=0;i<m.p.N;i++){
     const ev=m.ev[i];
-    const nR=m.p.N-i,vR=m.p.V-W;
-    const sr=sRatio(r,nR,vR);
-    const stk=C*sr;
-    const isNext=isA&&i===nextIdx&&vR>0&&nR>=vR;
+    const isNext=isA&&i===nextIdx;
 
     if(ev){
-      // Settled row - show edit button
+      // ── RIGA SETTLED: usa valori da recomp() (ev.stk dipende dalla quota reale!) ──
       const vincita=ev.esito==='W'?ev.stk*ev.q:0;
-      const cassaDopo=ev.esito==='W'?ev.C0-ev.stk+vincita:ev.C0-ev.stk;
       const cls=ev.esito==='W'?'rw':'rl';
-      h+=`<tr class="${cls}"><td style="color:var(--muted);font-size:11px">#${i+1}</td>
-      <td>
-        <input class="qt" type="number" value="${ev.q}" step="0.01" min="1.01" 
-          onchange="editEvQ(${idx},${i},parseFloat(this.value))">
-      </td>
-      <td style="font-weight:600">${fe(ev.stk)}</td>
-      <td style="color:var(--pos)">${ev.esito==='W'?fe(vincita):'—'}</td>
-      <td style="font-weight:700">${fe(cassaDopo)}</td>
-      <td><div style="display:flex;flex-direction:column;align-items:center;gap:3px">
-        <span class="bdg ${ev.esito==='W'?'bw':'bl'}">${ev.esito}</span>
-        ${isA?'':''}</div></td>
+      h+=`<tr class="${cls}">
+        <td style="color:var(--muted);font-size:11px">#${i+1}</td>
+        <td><input class="qt" type="number" value="${ev.q}" step="0.01" min="1.01"
+          onchange="editEvQ(${idx},${i},parseFloat(this.value))"></td>
+        <td style="font-weight:600">${fe(ev.stk)}</td>
+        <td style="color:var(--pos)">${ev.esito==='W'?fe(vincita):'—'}</td>
+        <td style="font-weight:700">${fe(ev.Cd)}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:3px;justify-content:center">
+            <span class="bdg ${ev.esito==='W'?'bw':'bl'}">${ev.esito}</span>
+            <button class="btn btn-ghost btn-xs" style="font-size:10px;padding:2px 5px" onclick="editEv(${idx},${i})">✏️</button>
+          </div>
+        </td>
       </tr>`;
-      if(ev.esito==='W'){C=C-stk+stk*ev.q;W++;}else C-=stk;
+      if(ev.esito==='W')W++;
+
     }else if(isNext){
-      const defQ=m.p.Q;
-      const winC=C-stk+stk*defQ,lossC=C-stk;
-      h+=`<tr class="rn"><td style="color:var(--accent);font-size:11px;font-weight:700">#${i+1}</td>
-      <td><input class="qt" type="number" id="mq${idx}" value="${defQ}" step="0.01" min="1.01" oninput="mRowPrev(${idx})"></td>
-      <td style="font-weight:800;color:var(--accent)">${fe(stk)}</td>
-      <td id="mwP${idx}" style="font-size:12px;color:var(--muted)">${fe(stk*defQ)}</td>
-      <td id="mcP${idx}"><span class="chip-w">W ${fe(winC)}</span> <span class="chip-l">L ${fe(lossC)}</span></td>
-      <td>
-        <div style="display:flex;gap:3px;justify-content:center">
-          <button class="btn btn-pos btn-xs" onclick="regEv(${idx},'W')">W</button>
-          <button class="btn btn-neg btn-xs" onclick="regEv(${idx},'L')">L</button>
-        </div>
-      </td></tr>`;
-    }else if(i>=nextIdx){
-      // Future: show estimated
-      const dimTxt=vR<=0?'—':nR<vR?'—':fe(stk);
-      h+=`<tr class="rd"><td style="font-size:11px">#${i+1}</td><td>—</td><td>${dimTxt}</td><td>—</td><td>—</td><td style="font-size:10px;color:var(--dim)">in attesa</td></tr>`;
+      // ── RIGA PROSSIMA: usa cassaFin (cassa CORRENTE da recomp) ──
+      const C=cassaFin;
+      const vR=m.p.V-winsTotal,nR=m.p.N-nextIdx;
+      if(vR<=0){
+        h+=`<tr class="rn"><td>#${i+1}</td><td colspan="5" style="color:var(--pos);font-weight:700">🏆 Obiettivo raggiunto!</td></tr>`;
+      }else if(nR<vR){
+        h+=`<tr class="rn"><td>#${i+1}</td><td colspan="5" style="color:var(--neg)">⛔ Non recuperabile</td></tr>`;
+      }else{
+        const defQ=m.p.Q;
+        const stkQ=stakeForQ(r,nR,vR,C,defQ);
+        const winC=C-stkQ+stkQ*defQ,lossC=C-stkQ;
+        h+=`<tr class="rn">
+          <td style="color:var(--accent);font-size:11px;font-weight:700">#${i+1}</td>
+          <td><input class="qt" type="number" id="mq${idx}" value="${defQ}" step="0.01" min="1.01" oninput="mRowPrev(${idx})"></td>
+          <td style="font-weight:800;color:var(--accent)" id="mStk${idx}">${fe(stkQ)}</td>
+          <td id="mwP${idx}" style="font-size:12px;color:var(--muted)">${fe(stkQ*defQ)}</td>
+          <td id="mcP${idx}"><span class="chip-w">W ${fe(winC)}</span> <span class="chip-l">L ${fe(lossC)}</span></td>
+          <td>
+            <div style="display:flex;gap:3px;justify-content:center">
+              <button class="btn btn-pos btn-xs" onclick="regEv(${idx},'W')">W</button>
+              <button class="btn btn-neg btn-xs" onclick="regEv(${idx},'L')">L</button>
+            </div>
+          </td>
+        </tr>`;
+      }
+    }else{
+      // ── RIGHE FUTURE ──
+      h+=`<tr class="rd">
+        <td style="font-size:11px">#${i+1}</td>
+        <td>—</td><td>—</td><td>—</td><td>—</td>
+        <td style="font-size:10px;color:var(--dim)">in attesa</td>
+      </tr>`;
     }
   }
   h+=`</tbody></table></div></div>`;
   return h;
 }
-
-// Live preview nella form generazione
 function mPrev(idx){
   const el=document.getElementById('mPv'+idx);if(!el)return;
   const B=parseFloat(document.getElementById('m'+idx+'B')?.value)||0;
@@ -603,7 +711,7 @@ function renderSc(){
         <td>
           <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
             <span class="bdg ${s.esito==='W'?'bw':'bl'}">${s.esito}</span>
-            ${isA?`<button class="btn btn-ghost btn-xs" style="font-size:10px;padding:2px 6px" onclick="editSt(${i})">✏️</button>`:''}
+            <button class="btn btn-ghost btn-xs" style="font-size:10px;padding:2px 6px" onclick="editSt(${i})">✏️</button>
           </div>
         </td>`;
       }else if(isNext){
@@ -809,6 +917,18 @@ function regEv(idx,esito){
   save();draw();
 }
 
+// Annulla evento i e tutti quelli successivi → li si reinserisce
+function editEv(idx,i){
+  if(!confirm(`Annullare le giocate dal #${i+1} in poi e reinserirle?`))return;
+  const m=S.mas[idx],rid=m.runId;
+  // Rimuovi trasferimento finale se esiste (si tornerà attivo)
+  S.budget.adj=S.budget.adj.filter(a=>a.ref!==`mf${idx}_${rid}`);
+  // Tronca eventi dal punto i
+  m.ev=m.ev.slice(0,i);
+  if(m.stato!=='attivo')m.stato='attivo';
+  save();draw();
+}
+
 function editEvQ(idx,i,newQ){
   // Just update stored quota, recompute everything
   if(!newQ||newQ<=1){return;}
@@ -986,10 +1106,13 @@ function expC(){
 }
 
 load();draw();
-// Register Service Worker for PWA/offline
-if('serviceWorker' in navigator){
-  window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
-}
+// iOS PWA: skip SW registration in standalone to avoid blank-screen cache bugs
+(function(){
+  const isIosStandalone=navigator.standalone===true;
+  if('serviceWorker' in navigator && !isIosStandalone){
+    window.addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  }
+})();
 </script>
 </body>
 </html>
