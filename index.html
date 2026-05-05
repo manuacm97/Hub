@@ -142,10 +142,10 @@ function defS(){return{
   budget:{iniziale:0,adj:[]},
   rageBet:{saldo:0,log:[]},
   mas:[
-    {id:0,name:'Masaniello 1',p:{B:50,N:10,V:6,Q:1.80},ev:[],stato:'config',B0:50,runId:null},
-    {id:1,name:'Masaniello 2',p:{B:50,N:10,V:6,Q:1.80},ev:[],stato:'config',B0:50,runId:null}
+    {id:0,name:'Masaniello 1',p:{B:50,N:10,V:6,Q:1.80},ev:[],stato:'config',B0:50,runId:null,pendingQ:null},
+    {id:1,name:'Masaniello 2',p:{B:50,N:10,V:6,Q:1.80},ev:[],stato:'config',B0:50,runId:null,pendingQ:null}
   ],
-  sc:{p:{B:10,N:10,Q:1.50},steps:[],stato:'config',B0:10,runId:null},
+  sc:{p:{B:10,N:10,Q:1.50},steps:[],stato:'config',B0:10,runId:null,pendingQ:null},
   fb:{bets:[]}
 };}
 let S=defS(),AT='bud';
@@ -284,7 +284,7 @@ function buildOverview(){
       h+=`<div class="ov-card" onclick="go('m${idx}')">
         <div class="ov-head"><span class="ov-lbl">${m.name}</span><span class="sbdg ${lb}" style="font-size:9px">${ic}</span></div>
         <div class="ov-num ${C>=m.B0?'pos':'neg'}">${fe(C)}</div>
-        <div class="ov-sub">${diff>=0?'+':''}${fe(diff)} · ${W}V ${played-W}P</div>
+        <div class="ov-sub">${diff>=0?'+':''}${fe(diff)} <span style="color:${C>=m.B0?'var(--pos)':'var(--neg)'}">(${diff>=0?'+':''}${m.B0>0?(diff/m.B0*100).toFixed(1):0}%)</span> · ${W}V ${played-W}P</div>
         <div class="prog-bar" style="margin:5px 0 2px"><div class="prog-fill" style="width:${pct}%;background:${C>=m.B0?'var(--pos)':'var(--accent)'}"></div></div>
         ${stkNext>0?`<div class="ov-sub">Next: <strong style="color:var(--accent)">${fe(stkNext)}</strong></div>`:''}
       </div>`;
@@ -307,7 +307,7 @@ function buildOverview(){
       <div class="ov-head"><span class="ov-lbl">📈 Scalata</span><span class="sbdg ${lb}" style="font-size:9px">${ic} ${sc.stato.toUpperCase()}</span></div>
       <div style="display:flex;align-items:flex-end;gap:14px">
         <div><div class="ov-num ${C>=sc.B0?'pos':'neg'}">${fe(C)}</div>
-        <div class="ov-sub">${done}/${sc.p.N} step · ×${mult.toFixed(2)}</div></div>
+        <div class="ov-sub">${done}/${sc.p.N} step · ×${mult.toFixed(2)} <span style="color:${C>=sc.B0?'var(--pos)':'var(--neg)'}">(${sc.B0>0?((C-sc.B0)/sc.B0*100).toFixed(1):0}%)</span></div></div>
         <div style="flex:1"><div class="prog-bar" style="margin:0 0 3px"><div class="prog-fill" style="width:${pct}%;background:var(--pos)"></div></div>
         <div class="ov-sub">Target: ${fe(sc.B0*Math.pow(sc.p.Q,sc.p.N))}</div></div>
       </div>
@@ -326,7 +326,8 @@ function buildOverview(){
     h+=`<div class="ov-num" style="color:var(--dim);font-size:15px">Nessuna scommessa</div>`;
   }else{
     h+=`<div style="display:flex;gap:16px;flex-wrap:wrap">
-      <div><div class="ov-num ${net>=0?'pos':'neg'}" style="font-size:20px">${fe(net)}</div><div class="ov-sub">net · ${won.length}V / ${lost.length}P</div></div>
+      <div><div class="ov-num ${net>=0?'pos':'neg'}" style="font-size:20px">${fe(net)}</div>
+      <div class="ov-sub">net · ${won.length}V / ${lost.length}P${bets.length>0?' · <span style="color:'+(net>=0?'var(--pos)':'var(--neg)')+'">'+((net/Math.max(0.01,bets.reduce((a,b)=>a+b.p,0)))*100).toFixed(1)+'% ROI</span>':''}</div></div>
       ${pendStk>0?`<div><div class="ov-num acc" style="font-size:20px">${fe(pendStk)}</div><div class="ov-sub">in gioco</div></div>`:''}
     </div>`;
   }
@@ -556,12 +557,12 @@ function masTable(idx,m,r,cassaFin,winsTotal){
       }else if(nR<vR){
         h+=`<tr class="rn"><td>#${i+1}</td><td colspan="5" style="color:var(--neg)">⛔ Non recuperabile</td></tr>`;
       }else{
-        const defQ=m.p.Q;
+        const defQ=m.pendingQ||m.p.Q;
         const stkQ=stakeForQ(r,nR,vR,C,defQ);
         const winC=C-stkQ+stkQ*defQ,lossC=C-stkQ;
         h+=`<tr class="rn">
           <td style="color:var(--accent);font-size:11px;font-weight:700">#${i+1}</td>
-          <td><input class="qt" type="number" id="mq${idx}" value="${defQ}" step="0.01" min="1.01" oninput="mRowPrev(${idx})"></td>
+          <td><input class="qt" type="number" id="mq${idx}" value="${m.pendingQ!=null?m.pendingQ:defQ}" step="0.01" min="1.01" oninput="S.mas[${idx}].pendingQ=parseFloat(this.value)||m.p.Q;save();mRowPrev(${idx})"></td>
           <td style="font-weight:800;color:var(--accent)" id="mStk${idx}">${fe(stkQ)}</td>
           <td id="mwP${idx}" style="font-size:12px;color:var(--muted)">${fe(stkQ*defQ)}</td>
           <td id="mcP${idx}"><span class="chip-w">W ${fe(winC)}</span> <span class="chip-l">L ${fe(lossC)}</span></td>
@@ -605,7 +606,7 @@ function mPrev(idx){
 // Live preview riga corrente
 function mRowPrev(idx){
   const m=S.mas[idx];
-  const q=parseFloat(document.getElementById('mq'+idx)?.value)||m.p.Q;
+  const q=parseFloat(document.getElementById('mq'+idx)?.value)||(m.pendingQ||m.p.Q);
   const {C,W,r}=recomp(m);
   const nR=m.p.N-m.ev.length,vR=m.p.V-W;
   const stk=stakeForQ(r,nR,vR,C,q); // stake aggiornato per quota reale
@@ -717,7 +718,7 @@ function renderSc(){
       }else if(isNext){
         const qd=s.q||sc.p.Q;
         const win=cHere*qd,pr=s.pr||0,rim=Math.max(0,win-pr);
-        h+=`<td><input class="qt" type="number" id="sq${i}" value="${qd}" step="0.01" min="1.01" oninput="scRowPrev(${i})"></td>
+        h+=`<td><input class="qt" type="number" id="sq${i}" value="${qd}" step="0.01" min="1.01" oninput="S.sc.steps[${i}].q=parseFloat(this.value)||sc.p.Q;save();scRowPrev(${i})"></td>
         <td style="font-weight:700;color:var(--accent)">${fe(cHere)}</td>
         <td id="swP${i}">${fe(win)}</td>
         <td id="scP${i}"><span class="chip-w">W ${fe(rim)}</span> <span class="chip-l">L €0</span></td>
@@ -910,6 +911,7 @@ function regEv(idx,esito){
   if(stk<=0){alert('Stake non calcolabile. Verifica i parametri.');return;}
   const Cd=esito==='W'?C-stk+stk*q:C-stk;
   m.ev.push({esito,q,stk,C0:C,Cd,t:new Date().toISOString()});
+  m.pendingQ=null; // reset pending quota for next event
   const W2=m.ev.filter(e=>e.esito==='W').length,p2=m.ev.length;
   const nR2=m.p.N-p2,vR2=m.p.V-W2;
   if(vR2<=0)m.stato='finito';
@@ -925,6 +927,7 @@ function editEv(idx,i){
   S.budget.adj=S.budget.adj.filter(a=>a.ref!==`mf${idx}_${rid}`);
   // Tronca eventi dal punto i
   m.ev=m.ev.slice(0,i);
+  m.pendingQ=null;
   if(m.stato!=='attivo')m.stato='attivo';
   save();draw();
 }
