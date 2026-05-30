@@ -6,60 +6,68 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-touch-fullscreen" content="yes">
-<meta name="theme-color" content="#0c0c12">
+<meta name="theme-color" content="#0e1012">
 <title>BetHub</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0c0c12;--s1:#161620;--s2:#1e1e2a;--s3:#272733;--text:#eceaf5;--muted:#7c7a90;--dim:#3c3a50;--accent:#f5a623;--ad:rgba(245,166,35,.13);--pos:#3ecf8e;--pd:rgba(62,207,142,.13);--neg:#e05c5c;--nd:rgba(224,92,92,.13);--rage:#a259ff;--rd:rgba(162,89,255,.13);--border:rgba(255,255,255,.08);--r:14px;--rs:10px}
+:root{--bg:#0e1012;--s1:#16191c;--s2:#1c2024;--s3:#252a2f;--text:#e7eaec;--muted:#878d93;--dim:#525860;--accent:#46a883;--ad:rgba(70,168,131,.12);--pos:#3ecf8e;--pd:rgba(62,207,142,.13);--neg:#d4706e;--nd:rgba(212,112,110,.13);--rage:#9a6ef0;--rd:rgba(154,110,240,.13);--border:rgba(255,255,255,.07);--r:8px;--rs:6px}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 input[type=number]::-webkit-outer-spin-button,input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
 input[type=number]{-moz-appearance:textfield}
-body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,sans-serif;font-size:15px;line-height:1.4;min-height:100vh;padding-bottom:74px;-webkit-font-smoothing:antialiased}
-.hdr{position:sticky;top:0;z-index:100;background:rgba(12,12,18,.95);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between}
-.hdr-logo{font-size:17px;font-weight:900;color:var(--accent)}
+body{background:var(--bg);color:var(--text);font-family:'Inter',-apple-system,sans-serif;font-size:15px;line-height:1.45;min-height:100vh;padding-bottom:74px;-webkit-font-smoothing:antialiased;font-feature-settings:"tnum" 1;letter-spacing:-.01em}
+.ic{width:1em;height:1em;display:inline-block;vertical-align:-.15em;flex:none;stroke-width:1.6}
+.hdr{position:sticky;top:0;z-index:100;background:rgba(14,16,18,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--border);padding:13px 16px;display:flex;align-items:center;justify-content:space-between}
+.hdr-logo{font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;letter-spacing:.01em}
+.hdr-logo .ic{width:17px;height:17px;color:var(--accent)}
 .hdr-bud{text-align:right}
-.hdr-lbl{font-size:10px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.12em}
-.hdr-val{font-size:24px;font-weight:800;letter-spacing:-1px;line-height:1}
-.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(22,22,32,.98);border-top:1px solid var(--border);display:flex;height:64px}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:var(--dim);font-size:9.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:none;background:none;padding:0;transition:color .2s}
+.hdr-lbl{font-size:10px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.14em}
+.hdr-val{font-size:23px;font-weight:600;letter-spacing:-.04em;line-height:1}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(18,20,23,.92);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;height:62px}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;color:var(--dim);font-size:9.5px;font-weight:500;letter-spacing:.07em;text-transform:uppercase;border:none;background:none;padding:0;transition:color .2s}
 .nav-btn.on{color:var(--accent)}
-.nav-ico{font-size:20px;line-height:1}
+.nav-ico{font-size:20px;line-height:1;display:flex;align-items:center;justify-content:center}
+.nav-ico .ic{width:20px;height:20px;stroke-width:1.5}
 .tab{display:none}.tab.on{display:block}
 .ct{padding:14px 14px 4px;max-width:560px;margin:0 auto}
-.card{background:var(--s1);border-radius:var(--r);padding:14px;margin-bottom:10px;border:1px solid var(--border)}
-.card-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:10px}
-.bnum{font-size:36px;font-weight:800;letter-spacing:-1.5px;line-height:1.05}
+.card{background:var(--s1);border-radius:var(--r);padding:15px;margin-bottom:10px;border:1px solid var(--border)}
+.card-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);margin-bottom:11px;display:flex;align-items:center;gap:6px}
+.card-lbl .ic{width:13px;height:13px;color:var(--dim)}
+.bnum{font-size:38px;font-weight:600;letter-spacing:-.04em;line-height:1.05}
 .pos{color:var(--pos)}.neg{color:var(--neg)}.acc{color:var(--accent)}.rc{color:var(--rage)}
 .g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
 .stat{background:var(--s2);border-radius:var(--rs);padding:10px 12px}
 .stat-lbl{font-size:11px;font-weight:500;color:var(--muted);margin-bottom:2px}
-.stat-val{font-size:17px;font-weight:700}
-.ilbl{display:block;font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px}
+.stat-lbl{font-size:11px;font-weight:400;color:var(--muted);margin-bottom:3px}
+.stat-val{font-size:18px;font-weight:600;letter-spacing:-.02em}
+.ilbl{display:block;font-size:12px;font-weight:500;color:var(--muted);margin-bottom:6px}
+.ilbl .ic{width:13px;height:13px;color:var(--dim);margin-right:4px}
 input,select{width:100%;background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);color:var(--text);padding:10px 12px;font-size:16px;font-family:inherit;outline:none;transition:border-color .2s;-webkit-appearance:none;appearance:none}
 input:focus,select:focus{border-color:var(--accent);background:var(--s3)}
 .ig{margin-bottom:10px}
 .ir{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:11px 16px;border-radius:var(--rs);font-size:14px;font-weight:700;cursor:pointer;border:none;transition:opacity .15s,transform .1s;white-space:nowrap;font-family:inherit}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:11px 16px;border-radius:var(--rs);font-size:14px;font-weight:600;cursor:pointer;border:none;transition:opacity .15s,transform .1s,background .15s;white-space:nowrap;font-family:inherit;letter-spacing:-.01em}
+.btn .ic{width:15px;height:15px}
 .btn:active{opacity:.8;transform:scale(.97)}
-.btn-acc{background:var(--accent);color:#0c0c12}
-.btn-pos{background:var(--pos);color:#0c0c12}
+.btn-acc{background:var(--accent);color:#0e1012}
+.btn-pos{background:var(--pos);color:#0e1012}
 .btn-neg{background:var(--neg);color:#fff}
 .btn-ghost{background:var(--s2);color:var(--text);border:1px solid var(--border)}
 .btn-rage{background:var(--rage);color:#fff}
-.btn-warn{background:#e8a225;color:#0c0c12}
+.btn-warn{background:#e8a225;color:#0e1012}
 .btn-del{background:var(--nd);color:var(--neg);border:1px solid rgba(224,92,92,.3)}
-.btn-ns{background:rgba(245,166,35,.2);color:var(--accent);border:1px solid rgba(245,166,35,.4)}
+.btn-ns{background:rgba(70,168,131,.2);color:var(--accent);border:1px solid rgba(70,168,131,.4)}
 .btn-sm{padding:7px 12px;font-size:13px}
-.btn-xs{padding:5px 9px;font-size:12px;font-weight:700}
+.btn-xs{padding:5px 9px;font-size:12px;font-weight:600}
+.btn-sm .ic,.btn-xs .ic{width:13px;height:13px}
 .btn-full{width:100%;display:flex}
 .btn-row{display:flex;gap:7px;flex-wrap:wrap}
 .prog-bar{height:5px;background:var(--s3);border-radius:3px;overflow:hidden;margin:6px 0}
 .prog-fill{height:100%;border-radius:3px;transition:width .4s}
 .alert{padding:11px 13px;border-radius:var(--rs);font-size:13px;margin-bottom:10px;line-height:1.5;font-weight:500}
-.aw{background:var(--ad);border:1px solid rgba(245,166,35,.3);color:var(--accent)}
+.aw{background:var(--ad);border:1px solid rgba(70,168,131,.3);color:var(--accent)}
 .ap{background:var(--pd);border:1px solid rgba(62,207,142,.35);color:var(--pos)}
 .an{background:var(--nd);border:1px solid rgba(224,92,92,.35);color:var(--neg)}
 .ai{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted)}
@@ -71,24 +79,24 @@ input:focus,select:focus{border-color:var(--accent);background:var(--s3)}
 .tbl tr:last-child td{border-bottom:none}
 .rw td{background:rgba(62,207,142,.06)}
 .rl td{background:rgba(224,92,92,.06)}
-.rn td{background:rgba(245,166,35,.06)}
+.rn td{background:rgba(70,168,131,.06)}
 .rd td{opacity:.3}
 .qt{width:62px;padding:5px 6px;font-size:13px;text-align:center;background:var(--s3);border-radius:6px;border:1px solid var(--border);color:var(--text);font-family:inherit}
 .qt:focus{border-color:var(--accent);outline:none}
-.cp-inp{width:88px;padding:5px 7px;font-size:13px;text-align:center;background:var(--s3);border-radius:6px;border:1px solid rgba(245,166,35,.4);color:var(--text);font-family:inherit}
+.cp-inp{width:88px;padding:5px 7px;font-size:13px;text-align:center;background:var(--s3);border-radius:6px;border:1px solid rgba(70,168,131,.4);color:var(--text);font-family:inherit}
 .cp-inp:focus{border-color:var(--accent);outline:none}
 .bdg{display:inline-flex;align-items:center;justify-content:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700}
 .bw{background:var(--pd);color:var(--pos)}.bl{background:var(--nd);color:var(--neg)}
 .sep{height:1px;background:var(--border);margin:12px 0}
-.rage-box{background:var(--rd);border:1px solid rgba(162,89,255,.5);border-radius:var(--r);padding:14px;margin-bottom:10px}
+.rage-box{background:var(--rd);border:1px solid rgba(154,110,240,.5);border-radius:var(--r);padding:14px;margin-bottom:10px}
 .rage-lock{text-align:center;padding:20px;background:var(--s2);border-radius:var(--r);border:1px solid var(--border);margin-bottom:10px}
 .sbdg{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
 .sa{background:var(--pd);color:var(--pos)}.sf{background:var(--ad);color:var(--accent)}.sx{background:var(--nd);color:var(--neg)}
-.stitle{font-size:20px;font-weight:800;letter-spacing:-.6px;margin-bottom:14px}
+.stitle{font-size:21px;font-weight:600;letter-spacing:-.03em;margin-bottom:16px}
 .drow{display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:13px;font-weight:500}
 .dl{color:var(--muted)}.dv{font-weight:700}
 .drow+.drow{border-top:1px solid var(--border)}
-.pbox{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.3);border-radius:var(--rs);padding:10px 14px;margin-bottom:10px}
+.pbox{background:rgba(70,168,131,.07);border:1px solid rgba(70,168,131,.3);border-radius:var(--rs);padding:10px 14px;margin-bottom:10px}
 .chip-w{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:var(--pd);color:var(--pos)}
 .chip-l{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:var(--nd);color:var(--neg)}
 .fb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--s2);border-radius:var(--rs);margin-bottom:6px;border:1px solid var(--border)}
@@ -101,21 +109,21 @@ input:focus,select:focus{border-color:var(--accent);background:var(--s3)}
 .empty{text-align:center;padding:28px 16px;color:var(--muted);font-size:14px}
 .overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.8);display:flex;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px)}
 .modal{background:var(--s1);border-radius:var(--r) var(--r) 0 0;padding:20px;width:100%;max-width:560px;border:1px solid var(--border);border-bottom:none;max-height:90vh;overflow-y:auto}
-.mt{font-size:17px;font-weight:800;margin-bottom:14px}
+.mt{font-size:17px;font-weight:600;letter-spacing:-.02em;margin-bottom:14px}
 
 .ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
 .ov-card{background:var(--s2);border-radius:var(--rs);padding:11px 13px;border:1px solid var(--border);cursor:pointer;transition:border-color .15s}
 .ov-card:active{border-color:var(--accent)}
 .ov-full{grid-column:1/-1}
 .ov-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
-.ov-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-.ov-num{font-size:22px;font-weight:800;letter-spacing:-.8px;line-height:1.1}
+.ov-lbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.ov-num{font-size:22px;font-weight:600;letter-spacing:-.04em;line-height:1.1}
 .ov-sub{font-size:10px;color:var(--muted);margin-top:1px}
 </style>
 </head>
 <body>
 <header class="hdr">
-  <div class="hdr-logo">🎯 BetHub</div>
+  <div class="hdr-logo"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg>BetHub</div>
   <div class="hdr-bud"><div class="hdr-lbl">Budget</div><div class="hdr-val" id="hBud">€0,00</div></div>
 </header>
 <div id="tab-bud" class="tab on"><div class="ct" id="ct-bud"></div></div>
@@ -124,11 +132,11 @@ input:focus,select:focus{border-color:var(--accent);background:var(--s3)}
 <div id="tab-sc"  class="tab"><div class="ct" id="ct-sc"></div></div>
 <div id="tab-fb"  class="tab"><div class="ct" id="ct-fb"></div></div>
 <nav class="nav">
-  <button class="nav-btn on"  data-t="bud" onclick="go('bud')"><span class="nav-ico">💰</span>Budget</button>
-  <button class="nav-btn"     data-t="m0"  onclick="go('m0')"><span class="nav-ico">1️⃣</span>Mas 1</button>
-  <button class="nav-btn"     data-t="m1"  onclick="go('m1')"><span class="nav-ico">2️⃣</span>Mas 2</button>
-  <button class="nav-btn"     data-t="sc"  onclick="go('sc')"><span class="nav-ico">📈</span>Scalata</button>
-  <button class="nav-btn"     data-t="fb"  onclick="go('fb')"><span class="nav-ico">🎲</span>Free</button>
+  <button class="nav-btn on"  data-t="bud" onclick="go('bud')"><span class="nav-ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7a2 2 0 0 1 2-2h11v3"/><path d="M4 7v10a2 2 0 0 0 2 2h13a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H6a2 2 0 0 1-2-1"/><circle cx="16.5" cy="13" r="1.3" fill="currentColor" stroke="none"/></svg></span>Budget</button>
+  <button class="nav-btn"     data-t="m0"  onclick="go('m0')"><span class="nav-ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="3.5"/><text x="12" y="16.2" text-anchor="middle" font-size="11" font-weight="600" fill="currentColor" stroke="none" font-family="Inter,sans-serif">1</text></svg></span>Mas 1</button>
+  <button class="nav-btn"     data-t="m1"  onclick="go('m1')"><span class="nav-ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="4" y="4" width="16" height="16" rx="3.5"/><text x="12" y="16.2" text-anchor="middle" font-size="11" font-weight="600" fill="currentColor" stroke="none" font-family="Inter,sans-serif">2</text></svg></span>Mas 2</button>
+  <button class="nav-btn"     data-t="sc"  onclick="go('sc')"><span class="nav-ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l3 3 7-7"/><path d="M15 7h5v5"/></svg></span>Scalata</button>
+  <button class="nav-btn"     data-t="fb"  onclick="go('fb')"><span class="nav-ico"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="9" cy="15" r="1.2" fill="currentColor" stroke="none"/></svg></span>Free</button>
 </nav>
 
 <script>
@@ -279,7 +287,7 @@ function buildOverview(){
       const diff=C-m.B0,pct=Math.min(100,played/m.p.N*100);
       const stkNext=(m.stato==='attivo'&&vRem>0&&nRem>=vRem)?stakeForQ(r,nRem,vRem,C,m.p.Q):0;
       const lb=m.stato==='attivo'?'sa':m.stato==='finito'?'sf':'sx';
-      const ic=m.stato==='attivo'?'🟢':m.stato==='finito'?'✅':'❌';
+      const ic=m.stato==='attivo'?'<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="currentColor"/></svg>':m.stato==='finito'?'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>':'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6"/><path d="m15 9-6 6"/></svg>';
       h+=`<div class="ov-card" onclick="go('m${idx}')">
         <div class="ov-head"><span class="ov-lbl">${m.name}</span><span class="sbdg ${lb}" style="font-size:9px">${ic}</span></div>
         <div class="ov-num ${C>=m.B0?'pos':'neg'}">${fe(C)}</div>
@@ -294,16 +302,16 @@ function buildOverview(){
   const sc=S.sc;
   if(sc.stato==='config'){
     h+=`<div class="ov-card ov-full" onclick="go('sc')">
-      <div class="ov-head"><span class="ov-lbl">📈 Scalata</span></div>
+      <div class="ov-head"><span class="ov-lbl"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l3 3 7-7"/><path d="M15 7h5v5"/></svg> Scalata</span></div>
       <div class="ov-num" style="color:var(--dim);font-size:15px">Non avviata</div>
     </div>`;
   }else{
     const C=scCassa(),done=sc.steps.filter(s=>s.esito!==null).length;
     const pct=done/sc.p.N*100,mult=sc.B0>0?(C/sc.B0):0;
     const lb=sc.stato==='attivo'?'sa':sc.stato==='finita'?'sf':'sx';
-    const ic=sc.stato==='attivo'?'🟢':sc.stato==='finita'?'✅':'❌';
+    const ic=sc.stato==='attivo'?'<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="currentColor"/></svg>':sc.stato==='finita'?'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>':'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6"/><path d="m15 9-6 6"/></svg>';
     h+=`<div class="ov-card ov-full" onclick="go('sc')">
-      <div class="ov-head"><span class="ov-lbl">📈 Scalata</span><span class="sbdg ${lb}" style="font-size:9px">${ic} ${sc.stato.toUpperCase()}</span></div>
+      <div class="ov-head"><span class="ov-lbl"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l3 3 7-7"/><path d="M15 7h5v5"/></svg> Scalata</span><span class="sbdg ${lb}" style="font-size:9px">${ic} ${sc.stato.toUpperCase()}</span></div>
       <div style="display:flex;align-items:flex-end;gap:14px">
         <div><div class="ov-num ${C>=sc.B0?'pos':'neg'}">${fe(C)}</div>
         <div class="ov-sub">${done}/${sc.p.N} step · ×${mult.toFixed(2)} <span style="color:${C>=sc.B0?'var(--pos)':'var(--neg)'}">(${sc.B0>0?((C-sc.B0)/sc.B0*100).toFixed(1):0}%)</span></div></div>
@@ -320,7 +328,7 @@ function buildOverview(){
   const pendStk=pending.reduce((a,b)=>a+b.p,0);
   h+='<div class="ov-grid">';
   h+=`<div class="ov-card ov-full" onclick="go('fb')">
-    <div class="ov-head"><span class="ov-lbl">🎲 Free Bet</span>${pending.length>0?`<span class="sbdg sa" style="font-size:9px">⏳ ${pending.length} in attesa</span>`:''}</div>`;
+    <div class="ov-head"><span class="ov-lbl"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="9" cy="15" r="1.2" fill="currentColor" stroke="none"/></svg> Free Bet</span>${pending.length>0?`<span class="sbdg sa" style="font-size:9px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> ${pending.length} in attesa</span>`:''}</div>`;
   if(!bets.length){
     h+=`<div class="ov-num" style="color:var(--dim);font-size:15px">Nessuna scommessa</div>`;
   }else{
@@ -358,8 +366,8 @@ function renderBud(){
     <div class="card-lbl">Impostazioni</div>
     <div class="ig"><label class="ilbl">Budget Iniziale (€)</label><input type="number" id="bInp" value="${S.budget.iniziale}" step="0.01"></div>
     <div class="btn-row">
-      <button class="btn btn-acc btn-sm" onclick="setBud()">💾 Salva</button>
-      <button class="btn btn-del btn-sm" onclick="resetAll()">🗑 Reset Tutto</button>
+      <button class="btn btn-acc btn-sm" onclick="setBud()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7"/><path d="M8 14h8v6H8z"/></svg> Salva</button>
+      <button class="btn btn-del btn-sm" onclick="resetAll()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7v13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7"/></svg> Reset Tutto</button>
     </div>
   </div>`;
 
@@ -367,18 +375,18 @@ function renderBud(){
   if(canRage){
     h+=`<div class="rage-box">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--rage);margin-bottom:3px">🔥 Rage Bet Fund</div>
+      <div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--rage);margin-bottom:3px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c2 3 5 4.5 5 8.5A5 5 0 0 1 7 12c0-1 .4-2 1-2.7C8 11 9 12 10 12c0-3 0-6 2-9z"/></svg> Rage Bet Fund</div>
       <div class="bnum rc" style="font-size:28px">${fe(rage)}</div></div>
-      <div style="font-size:32px">💀</div>
+      <div style="font-size:32px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="6.5"/><path d="M8.5 16v3"/><path d="M12 16v3.5"/><path d="M15.5 16v3"/><circle cx="9.5" cy="10" r="1.4" fill="currentColor" stroke="none"/><circle cx="14.5" cy="10" r="1.4" fill="currentColor" stroke="none"/></svg></div>
     </div>
     <div class="alert ai" style="margin-bottom:10px;font-size:12px">Budget sotto €10 — fondo sbloccato.</div>
     <div class="ig"><label class="ilbl">Importo da trasferire (€)</label><input type="number" id="rInp" placeholder="0.00" step="0.01"></div>
-    <button class="btn btn-rage btn-full" onclick="xferRage()">💸 Trasferisci al Budget</button>
+    <button class="btn btn-rage btn-full" onclick="xferRage()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.4"/><path d="M6.5 9.5h0"/><path d="M17.5 14.5h0"/></svg> Trasferisci al Budget</button>
     ${S.rageBet.log.length?`<div class="sep"></div>${S.rageBet.log.slice().reverse().map(l=>`<div class="trans-item"><span style="font-weight:600">${l.nota}</span><span class="tp">${fe(l.v)}</span></div>`).join('')}`:''}
     </div>`;
   }else{
     h+=`<div style="display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);padding:10px 14px;margin-bottom:10px;opacity:0.5">
-      <span style="font-size:16px">🔒</span>
+      <span style="font-size:16px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
       <div style="flex:1">
         <div style="font-size:12px;font-weight:700;color:var(--muted)">Rage Bet Fund</div>
         <div style="font-size:11px;color:var(--dim)">Disponibile quando budget &lt; €10</div>
@@ -404,8 +412,8 @@ function renderBud(){
 
   h+=`<div class="card"><div class="card-lbl">Dati</div>
   <div class="btn-row">
-    <button class="btn btn-ghost btn-sm" onclick="expJ()">📤 JSON</button>
-    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('impF').click()">📥 Importa</button>
+    <button class="btn btn-ghost btn-sm" onclick="expJ()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V5"/><path d="m7 9 5-5 5 5"/><path d="M5 20h14"/></svg> JSON</button>
+    <button class="btn btn-ghost btn-sm" onclick="document.getElementById('impF').click()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="m7 11 5 5 5-5"/><path d="M5 20h14"/></svg> Importa</button>
   </div><input type="file" id="impF" accept=".json" style="display:none" onchange="impJ(event)">
   </div><div style="height:16px"></div>`;
   document.getElementById('ct-bud').innerHTML=h;
@@ -427,7 +435,7 @@ function renderMas(idx){
 
   if(!isC){
     const lb=isFin?'finito':isFal?'fallito':'attivo';
-    const ic=isFin?'✅':isFal?'❌':'🟢';
+    const ic=isFin?'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>':isFal?'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6"/><path d="m15 9-6 6"/></svg>':'<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="currentColor"/></svg>';
     h+=`<div style="margin-bottom:10px"><span class="sbdg ${isFin?'sf':isFal?'sx':'sa'}">${ic} ${lb.toUpperCase()}</span></div>`;
   }
 
@@ -445,12 +453,12 @@ function renderMas(idx){
 
   if(isC){
     h+=`<div id="mPv${idx}" class="pbox"><div style="font-size:12px;color:var(--muted)">Compila i parametri…</div></div>
-    <div class="alert ai" style="font-size:12px;margin-bottom:10px">⚠️ La cassa iniziale verrà detratta dal budget alla generazione.</div>
-    <button class="btn btn-acc btn-full" onclick="genMas(${idx})">⚡ Genera</button>`;
+    <div class="alert ai" style="font-size:12px;margin-bottom:10px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 3 20h18z"/><path d="M12 10v5"/><path d="M12 18h.01"/></svg> La cassa iniziale verrà detratta dal budget alla generazione.</div>
+    <button class="btn btn-acc btn-full" onclick="genMas(${idx})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13h6l-1 8 8-10h-6z"/></svg> Genera</button>`;
   }else{
     h+=`<div class="btn-row" style="margin-top:6px">
-      <button class="btn btn-ghost btn-sm" onclick="rstMas(${idx})">♻️ Riconfigura</button>
-      ${isA?`<button class="btn btn-ns btn-sm" onclick="newStartMas(${idx})">🔄 New Start</button>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="rstMas(${idx})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.5-5.8L20 8"/><path d="M20 4v4h-4"/><path d="M20 12a8 8 0 0 1-13.5 5.8L4 16"/><path d="M4 20v-4h4"/></svg> Riconfigura</button>
+      ${isA?`<button class="btn btn-ns btn-sm" onclick="newStartMas(${idx})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.5-5.8L20 8"/><path d="M20 4v4h-4"/><path d="M20 12a8 8 0 0 1-13.5 5.8L4 16"/><path d="M4 20v-4h4"/></svg> New Start</button>`:''}
     </div>`;
   }
   h+=`</div>`;
@@ -478,9 +486,9 @@ function renderMas(idx){
           <div style="font-size:12px;color:var(--muted)">${nRem} rimaste · ${vRem} vincite mancanti</div>
         </div>`;
       }else if(vRem<=0){
-        h+=`<div class="sep"></div><div class="alert ap" style="margin-bottom:0">🏆 Obiettivo raggiunto!</div>`;
+        h+=`<div class="sep"></div><div class="alert ap" style="margin-bottom:0"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4.5a2 2 0 0 0 0 4H7"/><path d="M17 6h2.5a2 2 0 0 1 0 4H17"/><path d="M9 20h6"/><path d="M12 14v6"/></svg> Obiettivo raggiunto!</div>`;
       }else{
-        h+=`<div class="sep"></div><div class="alert an" style="margin-bottom:0">⛔ Non recuperabile (${nRem} rimaste, servono ${vRem}).</div>`;
+        h+=`<div class="sep"></div><div class="alert an" style="margin-bottom:0"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m6 6 12 12"/></svg> Non recuperabile (${nRem} rimaste, servono ${vRem}).</div>`;
       }
     }
     h+=`</div>`;
@@ -489,8 +497,8 @@ function renderMas(idx){
     if(isA){
       h+=`<div class="card"><div class="card-lbl">Gestione</div>
       <div class="btn-row">
-        <button class="btn btn-pos btn-sm" onclick="finMas(${idx})">✅ Finito & Trasferisci</button>
-        <button class="btn btn-neg btn-sm" onclick="falMas(${idx})">❌ Fallito</button>
+        <button class="btn btn-pos btn-sm" onclick="finMas(${idx})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg> Finito & Trasferisci</button>
+        <button class="btn btn-neg btn-sm" onclick="falMas(${idx})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6"/><path d="m15 9-6 6"/></svg> Fallito</button>
       </div></div>`;
     }
 
@@ -498,9 +506,9 @@ function renderMas(idx){
     const hasFin=rid&&S.budget.adj.some(a=>a.ref===`mf${idx}_${rid}`);
     if((isFin||isFal)&&!hasFin){
       h+=`<div class="alert aw">Non ancora trasferito.
-      <div style="margin-top:8px"><button class="btn btn-acc btn-sm" onclick="xferMas(${idx})">💸 Trasferisci ${fe(C)}</button></div></div>`;
+      <div style="margin-top:8px"><button class="btn btn-acc btn-sm" onclick="xferMas(${idx})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.4"/><path d="M6.5 9.5h0"/><path d="M17.5 14.5h0"/></svg> Trasferisci ${fe(C)}</button></div></div>`;
     }
-    if(hasFin)h+=`<div class="alert ap">✅ Trasferito al budget.</div>`;
+    if(hasFin)h+=`<div class="alert ap"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg> Trasferito al budget.</div>`;
 
     // TABELLA
     h+=masTable(idx,m,r,C,W);
@@ -518,7 +526,7 @@ function masTable(idx,m,r,cassaFin,winsTotal){
   let W=0; // per calcolare vR delle righe future
 
   let h=`<div class="card"><div class="card-lbl">Tabella Giocate</div>
-  <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Modifica quota → stake aggiornato. ✏️ per annullare e reinserire una giocata.</div>
+  <div style="font-size:11px;color:var(--muted);margin-bottom:6px">Modifica quota → stake aggiornato. <svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h8"/><path d="M15.5 4.5a2 2 0 0 1 3 3L8 18l-4 1 1-4z"/></svg> per annullare e reinserire una giocata.</div>
   <div class="tbl-wrap"><table class="tbl">
   <thead><tr><th>#</th><th>Quota</th><th>Stake</th><th>Vincita</th><th>Cassa</th><th>Esito</th></tr></thead>
   <tbody>`;
@@ -541,7 +549,7 @@ function masTable(idx,m,r,cassaFin,winsTotal){
         <td>
           <div style="display:flex;align-items:center;gap:3px;justify-content:center">
             <span class="bdg ${ev.esito==='W'?'bw':'bl'}">${ev.esito}</span>
-            <button class="btn btn-ghost btn-xs" style="font-size:10px;padding:2px 5px" onclick="editEv(${idx},${i})">✏️</button>
+            <button class="btn btn-ghost btn-xs" style="font-size:10px;padding:2px 5px" onclick="editEv(${idx},${i})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h8"/><path d="M15.5 4.5a2 2 0 0 1 3 3L8 18l-4 1 1-4z"/></svg></button>
           </div>
         </td>
       </tr>`;
@@ -552,9 +560,9 @@ function masTable(idx,m,r,cassaFin,winsTotal){
       const C=cassaFin;
       const vR=m.p.V-winsTotal,nR=m.p.N-nextIdx;
       if(vR<=0){
-        h+=`<tr class="rn"><td>#${i+1}</td><td colspan="5" style="color:var(--pos);font-weight:700">🏆 Obiettivo raggiunto!</td></tr>`;
+        h+=`<tr class="rn"><td>#${i+1}</td><td colspan="5" style="color:var(--pos);font-weight:700"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4.5a2 2 0 0 0 0 4H7"/><path d="M17 6h2.5a2 2 0 0 1 0 4H17"/><path d="M9 20h6"/><path d="M12 14v6"/></svg> Obiettivo raggiunto!</td></tr>`;
       }else if(nR<vR){
-        h+=`<tr class="rn"><td>#${i+1}</td><td colspan="5" style="color:var(--neg)">⛔ Non recuperabile</td></tr>`;
+        h+=`<tr class="rn"><td>#${i+1}</td><td colspan="5" style="color:var(--neg)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m6 6 12 12"/></svg> Non recuperabile</td></tr>`;
       }else{
         const defQ=m.pendingQ||m.p.Q;
         const stkQ=stakeForQ(r,nR,vR,C,defQ);
@@ -639,12 +647,12 @@ function renderSc(){
   let h=`<div class="stitle">Scalata</div>`;
   if(!isC){
     const lb=isF?'finito':isX?'fallito':'attivo';
-    const ic=isF?'✅':isX?'❌':'🟢';
+    const ic=isF?'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>':isX?'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6"/><path d="m15 9-6 6"/></svg>':'<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="currentColor"/></svg>';
     const V=sc.vite||1;
-    const vitaInfo=V>1?` &nbsp;🎮 Vita ${sc.vitaAtt||1}/${V}`:'';
+    const vitaInfo=V>1?` &nbsp;<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M7 11v3"/><path d="M5.5 12.5h3"/><circle cx="15.5" cy="11.5" r=".9" fill="currentColor" stroke="none"/><circle cx="17.5" cy="14" r=".9" fill="currentColor" stroke="none"/></svg> Vita ${sc.vitaAtt||1}/${V}`:'';
     h+=`<div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
       <span class="sbdg ${isF?'sf':isX?'sx':'sa'}">${ic} ${lb.toUpperCase()}</span>
-      ${V>1?`<span style="font-size:12px;font-weight:700;color:var(--accent)">🎮 Vita ${sc.vitaAtt||1}/${V}</span>`:''}
+      ${V>1?`<span style="font-size:12px;font-weight:700;color:var(--accent)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M7 11v3"/><path d="M5.5 12.5h3"/><circle cx="15.5" cy="11.5" r=".9" fill="currentColor" stroke="none"/><circle cx="17.5" cy="14" r=".9" fill="currentColor" stroke="none"/></svg> Vita ${sc.vitaAtt||1}/${V}</span>`:''}
       ${V>1&&sc.vitaLog&&sc.vitaLog.length?`<span style="font-size:11px;color:var(--dim)">${sc.vitaLog.length} persa${sc.vitaLog.length>1?'':'e'}</span>`:''}
     </div>`;
   }
@@ -656,17 +664,17 @@ function renderSc(){
   </div>
   <div class="ir">
     <div class="ig"><label class="ilbl">Quota Media (default step)</label><input type="number" id="scQ" value="${sc.p.Q}" step="0.01" min="1.01" ${!isC?'disabled':''} oninput="scPrev()"></div>
-    <div class="ig"><label class="ilbl">🎮 Vite (budget ÷ vite)</label><input type="number" id="scV" value="${sc.p.V||1}" min="1" max="10" step="1" ${!isC?'disabled':''} oninput="scPrev()"></div>
+    <div class="ig"><label class="ilbl"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M7 11v3"/><path d="M5.5 12.5h3"/><circle cx="15.5" cy="11.5" r=".9" fill="currentColor" stroke="none"/><circle cx="17.5" cy="14" r=".9" fill="currentColor" stroke="none"/></svg> Vite (budget ÷ vite)</label><input type="number" id="scV" value="${sc.p.V||1}" min="1" max="10" step="1" ${!isC?'disabled':''} oninput="scPrev()"></div>
   </div>`;
 
   if(isC){
     h+=`<div id="scPv" class="pbox"><div style="font-size:12px;color:var(--muted)">Compila i parametri…</div></div>
-    <div class="alert ai" style="font-size:12px;margin-bottom:10px">⚠️ La cassa iniziale verrà detratta dal budget alla generazione.</div>
-    <button class="btn btn-acc btn-full" onclick="genSc()">⚡ Genera Scalata</button>`;
+    <div class="alert ai" style="font-size:12px;margin-bottom:10px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4 3 20h18z"/><path d="M12 10v5"/><path d="M12 18h.01"/></svg> La cassa iniziale verrà detratta dal budget alla generazione.</div>
+    <button class="btn btn-acc btn-full" onclick="genSc()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3 5 13h6l-1 8 8-10h-6z"/></svg> Genera Scalata</button>`;
   }else{
     h+=`<div class="btn-row" style="margin-top:6px">
-      <button class="btn btn-ghost btn-sm" onclick="rstSc()">♻️ Riconfigura</button>
-      ${isX||isF?`<button class="btn btn-acc btn-sm" onclick="newSc()">🆕 New</button>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="rstSc()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.5-5.8L20 8"/><path d="M20 4v4h-4"/><path d="M20 12a8 8 0 0 1-13.5 5.8L4 16"/><path d="M4 20v-4h4"/></svg> Riconfigura</button>
+      ${isX||isF?`<button class="btn btn-acc btn-sm" onclick="newSc()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.5 5.3 5.8.8-4.2 4 1 5.7L12 16.6 6.9 19.3l1-5.7-4.2-4 5.8-.8z"/></svg> New</button>`:''}
     </div>`;
   }
   h+=`</div>`;
@@ -684,17 +692,17 @@ function renderSc(){
     if(isA){
       h+=`<div class="card"><div class="card-lbl">Gestione</div>
       <div class="btn-row">
-        <button class="btn btn-pos btn-sm" onclick="finSc()">✅ Finita & Trasferisci</button>
-        <button class="btn btn-neg btn-sm" onclick="falSc()">❌ Fallita</button>
+        <button class="btn btn-pos btn-sm" onclick="finSc()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg> Finita & Trasferisci</button>
+        <button class="btn btn-neg btn-sm" onclick="falSc()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6"/><path d="m15 9-6 6"/></svg> Fallita</button>
       </div></div>`;
     }
 
     const hasFin=rid&&S.budget.adj.some(a=>a.ref===`sf_${rid}`);
     if(isF&&!hasFin&&C>0){
-      h+=`<div class="alert aw">Non trasferita.<div style="margin-top:8px"><button class="btn btn-acc btn-sm" onclick="xferSc()">💸 Trasferisci ${fe(C)}</button></div></div>`;
+      h+=`<div class="alert aw">Non trasferita.<div style="margin-top:8px"><button class="btn btn-acc btn-sm" onclick="xferSc()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.4"/><path d="M6.5 9.5h0"/><path d="M17.5 14.5h0"/></svg> Trasferisci ${fe(C)}</button></div></div>`;
     }
     if(isX){h+=`<div class="alert an">Scalata fallita. La cassa iniziale è già stata detratta dal budget.</div>`;}
-    if(hasFin)h+=`<div class="alert ap">✅ Trasferita al budget.</div>`;
+    if(hasFin)h+=`<div class="alert ap"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg> Trasferita al budget.</div>`;
 
     // TABLE
     const firstPend=sc.steps.findIndex(s=>s.esito===null);
@@ -708,7 +716,7 @@ function renderSc(){
       const cHere=i===0?sc.B0:(sc.steps[i-1]?.Cd??sc.B0);
 
       h+=`<tr class="${cls}">`;
-      h+=`<td style="font-size:11px;color:var(--muted)">#${i+1}${s.isCheckpoint?`<br><span style="font-size:9px;color:var(--accent)">🏁</span>`:''}`;
+      h+=`<td style="font-size:11px;color:var(--muted)">#${i+1}${s.isCheckpoint?`<br><span style="font-size:9px;color:var(--accent)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2 3 2 3H5"/></svg></span>`:''}`;
       h+=`</td>`;
 
       if(s.esito!==null){
@@ -720,7 +728,7 @@ function renderSc(){
         <td>
           <div style="display:flex;flex-direction:column;align-items:center;gap:3px">
             <span class="bdg ${s.esito==='W'?'bw':'bl'}">${s.esito}</span>
-            <button class="btn btn-ghost btn-xs" style="font-size:10px;padding:2px 6px" onclick="editSt(${i})">✏️</button>
+            <button class="btn btn-ghost btn-xs" style="font-size:10px;padding:2px 6px" onclick="editSt(${i})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h8"/><path d="M15.5 4.5a2 2 0 0 1 3 3L8 18l-4 1 1-4z"/></svg></button>
           </div>
         </td>`;
       }else if(isNext){
@@ -737,7 +745,7 @@ function renderSc(){
               <button class="btn btn-neg btn-xs" onclick="regSt(${i},'L')">L</button>
             </div>
             <div style="display:flex;align-items:center;gap:4px;margin-top:3px">
-              <button class="btn btn-xs" style="padding:3px 6px;font-size:11px;background:${s.isCheckpoint?'var(--accent)':'var(--s3)'};color:${s.isCheckpoint?'#000':'var(--muted)'};" onclick="togCP(${i})">🏁</button>
+              <button class="btn btn-xs" style="padding:3px 6px;font-size:11px;background:${s.isCheckpoint?'var(--accent)':'var(--s3)'};color:${s.isCheckpoint?'#000':'var(--muted)'};" onclick="togCP(${i})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2 3 2 3H5"/></svg></button>
               ${s.isCheckpoint?`<input type="number" class="cp-inp" id="cpI${i}" value="${s.pr||''}" placeholder="Preleva €" step="0.01" oninput="S.sc.steps[${i}].pr=parseFloat(this.value)||0;save();scRowPrev(${i})">`:``}
             </div>
           </div>
@@ -762,7 +770,7 @@ function scPrev(){
   if(!B||!N||!Q||Q<=1){el.innerHTML='<div style="font-size:12px;color:var(--dim)">Parametri non validi</div>';return;}
   const vitaB=Math.round(B/V*100)/100;
   const tgt=vitaB*Math.pow(Q,N);
-  let vitaInfo=V>1?`<div style="font-size:11px;color:var(--accent);margin-bottom:8px">🎮 ${V} vite × ${fe(vitaB)} — totale: ${fe(B)}</div>`:'';
+  let vitaInfo=V>1?`<div style="font-size:11px;color:var(--accent);margin-bottom:8px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M7 11v3"/><path d="M5.5 12.5h3"/><circle cx="15.5" cy="11.5" r=".9" fill="currentColor" stroke="none"/><circle cx="17.5" cy="14" r=".9" fill="currentColor" stroke="none"/></svg> ${V} vite × ${fe(vitaB)} — totale: ${fe(B)}</div>`:'';
   let tbl=`<div class="g2" style="margin-bottom:10px">
     <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">Target / Vita</div><div style="font-size:20px;font-weight:800;color:var(--pos)">${fe(tgt)}</div></div>
     <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">${V>1?'Budget / Vita':'Guadagno'}</div><div style="font-size:20px;font-weight:800;color:var(--pos)">${V>1?fe(vitaB):fe(tgt-B)}</div></div>
@@ -820,7 +828,7 @@ function renderFb(){
     <div class="ig"><label class="ilbl">Quota</label><input type="number" id="fbQ" placeholder="1.50" step="0.01" oninput="fbPrev()"></div>
   </div>
   <div id="fbPv" style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px"></div>
-  <button class="btn btn-acc btn-full" onclick="addFb()">➕ Aggiungi</button>
+  <button class="btn btn-acc btn-full" onclick="addFb()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Aggiungi</button>
   </div>`;
 
   const pending=bets.filter(b=>b.esito===null);
@@ -835,7 +843,7 @@ function renderFb(){
           <button class="btn btn-pos btn-xs" onclick="setFb('${b.id}','W')">W</button>
           <button class="btn btn-neg btn-xs" onclick="setFb('${b.id}','L')">L</button>
         </div>
-        <button class="btn btn-ghost btn-xs" onclick="delFb('${b.id}')">🗑</button>
+        <button class="btn btn-ghost btn-xs" onclick="delFb('${b.id}')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7v13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7"/></svg></button>
       </div></div>`;
     }
     h+=`</div>`;
@@ -849,12 +857,12 @@ function renderFb(){
         <div class="fbt"><span class="bdg ${b.esito==='W'?'bw':'bl'}">${b.esito}</span> @${b.q} — ${fe(b.p)}</div>
         <div class="fbs">Net: ${fe(n)} · ${fd(b.t)}</div>
       </div>
-      <button class="btn btn-del btn-xs" onclick="delFb('${b.id}')">🗑</button>
+      <button class="btn btn-del btn-xs" onclick="delFb('${b.id}')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7v13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7"/></svg></button>
       </div>`;
     }
     h+=`</div>`;
   }
-  if(!bets.length)h+=`<div class="empty"><div style="font-size:32px;margin-bottom:8px">🎲</div>Nessuna free bet registrata</div>`;
+  if(!bets.length)h+=`<div class="empty"><div style="font-size:32px;margin-bottom:8px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="9" cy="15" r="1.2" fill="currentColor" stroke="none"/></svg></div>Nessuna free bet registrata</div>`;
   h+=`<div style="height:16px"></div>`;
   document.getElementById('ct-fb').innerHTML=h;
 }
@@ -868,7 +876,7 @@ function xferRage(){
   const v=parseFloat(document.getElementById('rInp').value)||0,r=rageSaldo();
   if(v<=0||v>r+.001){alert('Importo non valido (max '+fe(r)+')');return;}
   S.rageBet.saldo-=v;S.rageBet.log.push({v,t:new Date().toISOString(),nota:'Trasf. Rage Bet'});
-  addAdj('rage',v,'💀 Rage Bet → Budget','rage_'+Date.now());
+  addAdj('rage',v,'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="6.5"/><path d="M8.5 16v3"/><path d="M12 16v3.5"/><path d="M15.5 16v3"/><circle cx="9.5" cy="10" r="1.4" fill="currentColor" stroke="none"/><circle cx="14.5" cy="10" r="1.4" fill="currentColor" stroke="none"/></svg> Rage Bet → Budget','rage_'+Date.now());
   save();draw();
 }
 
@@ -974,7 +982,7 @@ function openReset(){
   const m0=S.mas[0],m1=S.mas[1];
   const c0=recomp(m0).C,c1=recomp(m1).C,tot=c0+c1;
   const o=document.createElement('div');o.className='overlay';o.id='rOvl';
-  o.innerHTML=`<div class="modal"><div class="mt">🔄 Riavvia Entrambi</div>
+  o.innerHTML=`<div class="modal"><div class="mt"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.5-5.8L20 8"/><path d="M20 4v4h-4"/><path d="M20 12a8 8 0 0 1-13.5 5.8L4 16"/><path d="M4 20v-4h4"/></svg> Riavvia Entrambi</div>
   <div class="alert aw" style="margin-bottom:12px">Cassa totale: <strong>${fe(tot)}</strong></div>
   <div class="ir"><div class="ig"><label class="ilbl">Cassa Mas 1</label><input type="number" id="r0" value="${(tot/2).toFixed(2)}" step="0.01" oninput="rChk(${tot})"></div>
   <div class="ig"><label class="ilbl">Cassa Mas 2</label><input type="number" id="r1" value="${(tot/2).toFixed(2)}" step="0.01" oninput="rChk(${tot})"></div></div>
@@ -986,7 +994,7 @@ function openReset(){
   <div class="ir"><div class="ig"><label class="ilbl">Q.Media Mas 1</label><input type="number" id="rQ0" value="${m0.p.Q}" step="0.01"></div>
   <div class="ig"><label class="ilbl">Q.Media Mas 2</label><input type="number" id="rQ1" value="${m1.p.Q}" step="0.01"></div></div>
   <div class="btn-row" style="margin-top:6px">
-    <button class="btn btn-acc btn-full" onclick="confReset(${tot})">✅ Riavvia</button>
+    <button class="btn btn-acc btn-full" onclick="confReset(${tot})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg> Riavvia</button>
     <button class="btn btn-ghost" onclick="document.getElementById('rOvl').remove()">Annulla</button>
   </div></div>`;
   document.body.appendChild(o);rChk(tot);
@@ -1033,7 +1041,7 @@ function genSc(){
   S.sc.vite=V;S.sc.vitaAtt=1;S.sc.vitaLog=[];
   S.sc.steps=Array.from({length:N},(_,i)=>({id:i,q:Q,esito:null,isCheckpoint:false,pr:0,Cp:null,Cd:null}));
   const vitaLbl=V>1?` (${V} vite × ${fe(vitaB)})`:' ';
-  addAdj('sc',-B,`📈 Scalata avviata${vitaLbl}`,`sg_${rid}`);
+  addAdj('sc',-B,`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l3 3 7-7"/><path d="M15 7h5v5"/></svg> Scalata avviata${vitaLbl}`,`sg_${rid}`);
   save();draw();
 }
 function rstSc(){
@@ -1041,7 +1049,7 @@ function rstSc(){
   const rid=S.sc.runId;
   if(rid&&!S.budget.adj.some(a=>a.ref===`sf_${rid}`)){
     const gen=S.budget.adj.find(a=>a.ref===`sg_${rid}`);
-    if(gen)addAdj('sc',Math.abs(gen.v),'📈 Scalata riconfigura (rimborso)',`sr_${rid}`);
+    if(gen)addAdj('sc',Math.abs(gen.v),'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l3 3 7-7"/><path d="M15 7h5v5"/></svg> Scalata riconfigura (rimborso)',`sr_${rid}`);
   }
   S.sc.stato='config';S.sc.steps=[];S.sc.runId=null;
   save();draw();
@@ -1063,7 +1071,7 @@ function regSt(i,esito){
     if(s.isCheckpoint&&s.pr>0){
       const p=Math.min(s.pr,win);dopo=Math.max(0,win-p);
       const rid=sc.runId;
-      addAdj('sc',p,`🏁 Scalata CP #${i+1}`,`sc_cp_${i}_${rid}`);
+      addAdj('sc',p,`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h11l-2 3 2 3H5"/></svg> Scalata CP #${i+1}`,`sc_cp_${i}_${rid}`);
     }
     s.Cd=dopo;
   }else{
