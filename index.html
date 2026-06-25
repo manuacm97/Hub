@@ -88,8 +88,6 @@ input:focus,select:focus{border-color:var(--accent);background:var(--s3)}
 .bdg{display:inline-flex;align-items:center;justify-content:center;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700}
 .bw{background:var(--pd);color:var(--pos)}.bl{background:var(--nd);color:var(--neg)}
 .sep{height:1px;background:var(--border);margin:12px 0}
-.rage-box{background:var(--rd);border:1px solid rgba(154,110,240,.5);border-radius:var(--r);padding:14px;margin-bottom:10px}
-.rage-lock{text-align:center;padding:20px;background:var(--s2);border-radius:var(--r);border:1px solid var(--border);margin-bottom:10px}
 .sbdg{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
 .sa{background:var(--pd);color:var(--pos)}.sf{background:var(--ad);color:var(--accent)}.sx{background:var(--nd);color:var(--neg)}
 .stitle{font-size:21px;font-weight:600;letter-spacing:-.03em;margin-bottom:16px}
@@ -119,6 +117,25 @@ input:focus,select:focus{border-color:var(--accent);background:var(--s3)}
 .ov-lbl{font-size:10px;font-weight:500;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
 .ov-num{font-size:22px;font-weight:600;letter-spacing:-.04em;line-height:1.1}
 .ov-sub{font-size:10px;color:var(--muted);margin-top:1px}
+input[type=checkbox]{width:auto;accent-color:var(--accent);min-width:18px;min-height:18px}
+.gold{background:linear-gradient(120deg,#f5d061,#e6b422,#fff6cf,#d4a017,#f5d061);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:goldsh 4.5s linear infinite}
+@keyframes goldsh{to{background-position:200% center}}
+.gold-card{border-color:rgba(230,180,34,.5)!important;box-shadow:0 0 0 1px rgba(230,180,34,.22),0 6px 26px rgba(230,180,34,.12);background:linear-gradient(180deg,rgba(230,180,34,.07),var(--s1))}
+.alert-gold{background:linear-gradient(135deg,rgba(230,180,34,.14),rgba(245,208,97,.07));border:1px solid rgba(230,180,34,.45);color:#f5d061;font-weight:600}
+.tag-ante{display:inline-flex;align-items:center;padding:1px 6px;border-radius:5px;font-size:9px;font-weight:800;letter-spacing:.05em;background:rgba(154,110,240,.18);color:var(--rage);margin-left:5px;vertical-align:middle}
+.gradg{background:linear-gradient(120deg,#3ecf8e,#aef7d2,#27a86f,#7ef0b8,#3ecf8e);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:goldsh 4.5s linear infinite}
+.gradr{background:linear-gradient(120deg,#d4706e,#f5b8b8,#b04240,#f0a0a0,#d4706e);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;animation:goldsh 4.5s linear infinite}
+.card-pos{border-color:rgba(62,207,142,.42)!important;box-shadow:0 0 0 1px rgba(62,207,142,.18),0 6px 26px rgba(62,207,142,.1);background:linear-gradient(180deg,rgba(62,207,142,.05),var(--s1))}
+.card-neg{border-color:rgba(212,112,110,.42)!important;box-shadow:0 0 0 1px rgba(212,112,110,.18),0 6px 26px rgba(212,112,110,.1);background:linear-gradient(180deg,rgba(212,112,110,.05),var(--s1))}
+.ante-toggle{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:var(--rs);font-size:13px;font-weight:600;cursor:pointer;border:1px solid var(--border);background:var(--s2);color:var(--muted);width:100%;transition:all .15s;font-family:inherit}
+.ante-toggle.on{background:var(--rd);border-color:rgba(154,110,240,.5);color:var(--rage)}
+.ante-toggle .ic{width:15px;height:15px}
+details.fold{padding:0;overflow:hidden}
+details.fold>summary{padding:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;list-style:none;user-select:none}
+details.fold>summary::-webkit-details-marker{display:none}
+details.fold .chev{font-size:11px;color:var(--muted);transition:transform .2s}
+details.fold[open] .chev{transform:rotate(180deg)}
+.disc{background:none;border:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:7px 10px;border-radius:var(--rs);color:var(--muted);font-family:inherit;font-size:12px;font-weight:600;gap:6px}
 </style>
 </head>
 <body>
@@ -147,7 +164,6 @@ input:focus,select:focus{border-color:var(--accent);background:var(--s3)}
 const SK='bh7';
 function defS(){return{
   budget:{iniziale:0,adj:[]},
-  rageBet:{saldo:0,log:[]},
   mas:[
     {id:0,name:'Masaniello 1',p:{B:50,N:10,V:6,Q:1.80},ev:[],stato:'config',B0:50,runId:null,pendingQ:null},
     {id:1,name:'Masaniello 2',p:{B:50,N:10,V:6,Q:1.80},ev:[],stato:'config',B0:50,runId:null,pendingQ:null}
@@ -223,14 +239,33 @@ function budTot(){
   let t=S.budget.iniziale;
   S.budget.adj.forEach(a=>t+=a.v);
   // Puntata tolta subito; vincita (90%) aggiunta solo se vinta
-  S.fb.bets.forEach(b=>{t-=b.p;if(b.esito==='W')t+=b.p*b.q*.9;});
+  S.fb.bets.forEach(b=>{t-=b.p;if(b.esito==='W')t+=b.p*b.q;});
   return t;
 }
-function rageSaldo(){
-  let r=S.rageBet.saldo;
-  S.fb.bets.forEach(b=>{if(b.esito==='W')r+=b.p*b.q*.1;});
-  return r;
+function rageSaldo(){return 0;}
+// Somma "bloccata" nei masaniello non ancora trasferiti
+function masLocked(){
+  let t=0;
+  S.mas.forEach((m,i)=>{
+    if(m.stato==='config')return;
+    const transferred=m.runId&&S.budget.adj.some(a=>a.ref===`mf${i}_${m.runId}`);
+    if(!transferred)t+=recomp(m).C;
+  });
+  return t;
 }
+// Somma "bloccata" nella scalata (cassa corrente + vite future riservate)
+function scLocked(){
+  const sc=S.sc;
+  if(!sc||sc.stato==='config')return 0;
+  const transferred=sc.runId&&S.budget.adj.some(a=>a.ref===`sf_${sc.runId}`);
+  if(transferred)return 0;
+  let locked=scCassa();
+  const V=sc.vite||1,vitaAtt=sc.vitaAtt||1;
+  if(sc.stato==='attivo'&&V>1)locked+=Math.max(0,V-vitaAtt)*(sc.B0||0);
+  return locked;
+}
+// Budget globale = liquido + masaniello + scalata
+function budGlobal(){return budTot()+masLocked()+scLocked();}
 
 // ══════════════════════════════════════════
 //  FORMAT
@@ -242,6 +277,7 @@ function fe(v,d=2){
 function fd(iso){return iso?new Date(iso).toLocaleString('it-IT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):''}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).substr(2,4)}
 function addAdj(tipo,v,desc,ref){S.budget.adj.push({id:uid(),tipo,v,t:new Date().toISOString(),desc,ref});}
+function esc(s){return(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
 // ══════════════════════════════════════════
 //  NAVIGATION
@@ -324,7 +360,7 @@ function buildOverview(){
   const bets=S.fb.bets;
   const pending=bets.filter(b=>b.esito===null);
   const won=bets.filter(b=>b.esito==='W'),lost=bets.filter(b=>b.esito==='L');
-  const net=won.reduce((a,b)=>a+b.p*b.q*.9,0)-bets.reduce((a,b)=>a+b.p,0);
+  const net=won.reduce((a,b)=>a+b.p*b.q,0)-bets.reduce((a,b)=>a+b.p,0);
   const pendStk=pending.reduce((a,b)=>a+b.p,0);
   h+='<div class="ov-grid">';
   h+=`<div class="ov-card ov-full" onclick="go('fb')">
@@ -346,21 +382,27 @@ function buildOverview(){
 //  BUDGET TAB
 // ══════════════════════════════════════════
 function renderBud(){
-  const bud=budTot(),rage=rageSaldo(),canRage=bud<10;
-  const masAdj=S.budget.adj.filter(a=>a.tipo==='mas'||a.tipo==='sc');
-  const rAdj=S.budget.adj.filter(a=>a.tipo==='rage');
-  let fbN=0;S.fb.bets.forEach(b=>{if(b.esito!==null){fbN-=b.p;if(b.esito==='W')fbN+=b.p*b.q*.9;}});
+  const bud=budTot();
+  const mLock=masLocked(),sLock=scLocked(),glob=bud+mLock+sLock;
+  const isGold=glob>300;
 
-  let h=`<div class="stitle">Budget Hub</div>
-  <div class="card">
-    <div class="card-lbl">Budget Totale</div>
-    <div class="bnum ${bud>=0?'pos':'neg'}">${fe(bud)}</div>
-    <div class="sep"></div>
-    <div class="drow"><span class="dl">Iniziale</span><span class="dv">${fe(S.budget.iniziale)}</span></div>`;
-  if(masAdj.length){const t=masAdj.reduce((s,a)=>s+a.v,0);h+=`<div class="drow"><span class="dl">Mas/Scalata</span><span class="dv ${t>=0?'pos':'neg'}">${fe(t)}</span></div>`;}
-  if(rAdj.length){const t=rAdj.reduce((s,a)=>s+a.v,0);h+=`<div class="drow"><span class="dl">Da Rage Bet</span><span class="dv pos">${fe(t)}</span></div>`;}
-  if(S.fb.bets.filter(b=>b.esito!==null).length)h+=`<div class="drow"><span class="dl">Free Bet net</span><span class="dv ${fbN>=0?'pos':'neg'}">${fe(fbN)}</span></div>`;
-  h+=`</div>`;
+  let h=`<div class="stitle">Budget Hub</div>`;
+
+  // ── GLOBALE + TOTALE (solo cifre, affiancati, in cima) ──
+  h+=`<div class="g2">
+    <div class="card${isGold?' gold-card':''}" style="margin-bottom:0">
+      <div class="card-lbl" style="margin-bottom:7px">Globale</div>
+      <div class="bnum ${isGold?'gold':(glob>=0?'pos':'neg')}" style="font-size:29px">${fe(glob)}</div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-lbl" style="margin-bottom:7px">Totale</div>
+      <div class="bnum ${bud>=0?'pos':'neg'}" style="font-size:29px">${fe(bud)}</div>
+    </div>
+  </div>`;
+  if(isGold){
+    h+=`<div class="alert alert-gold" style="margin-top:10px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 9 7l-5 1 3.5 4-1 5L12 14l4.5 3-1-5L19 8l-5-1z"/></svg> Hai superato i €300 — è il momento ideale per prelevare i profitti.</div>`;
+  }else{h+=`<div style="height:10px"></div>`;}
+
   h+=buildOverview();
   h+=`<div class="card">
     <div class="card-lbl">Impostazioni</div>
@@ -369,46 +411,22 @@ function renderBud(){
       <button class="btn btn-acc btn-sm" onclick="setBud()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 4h11l3 3v13H5z"/><path d="M8 4v5h7"/><path d="M8 14h8v6H8z"/></svg> Salva</button>
       <button class="btn btn-del btn-sm" onclick="resetAll()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7v13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7"/></svg> Reset Tutto</button>
     </div>
-  </div>`;
-
-  // RAGE
-  if(canRage){
-    h+=`<div class="rage-box">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div><div style="font-size:10px;font-weight:700;text-transform:uppercase;color:var(--rage);margin-bottom:3px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c2 3 5 4.5 5 8.5A5 5 0 0 1 7 12c0-1 .4-2 1-2.7C8 11 9 12 10 12c0-3 0-6 2-9z"/></svg> Rage Bet Fund</div>
-      <div class="bnum rc" style="font-size:28px">${fe(rage)}</div></div>
-      <div style="font-size:32px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="6.5"/><path d="M8.5 16v3"/><path d="M12 16v3.5"/><path d="M15.5 16v3"/><circle cx="9.5" cy="10" r="1.4" fill="currentColor" stroke="none"/><circle cx="14.5" cy="10" r="1.4" fill="currentColor" stroke="none"/></svg></div>
-    </div>
-    <div class="alert ai" style="margin-bottom:10px;font-size:12px">Budget sotto €10 — fondo sbloccato.</div>
-    <div class="ig"><label class="ilbl">Importo da trasferire (€)</label><input type="number" id="rInp" placeholder="0.00" step="0.01"></div>
-    <button class="btn btn-rage btn-full" onclick="xferRage()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.4"/><path d="M6.5 9.5h0"/><path d="M17.5 14.5h0"/></svg> Trasferisci al Budget</button>
-    ${S.rageBet.log.length?`<div class="sep"></div>${S.rageBet.log.slice().reverse().map(l=>`<div class="trans-item"><span style="font-weight:600">${l.nota}</span><span class="tp">${fe(l.v)}</span></div>`).join('')}`:''}
-    </div>`;
-  }else{
-    h+=`<div style="display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:var(--rs);padding:10px 14px;margin-bottom:10px;opacity:0.5">
-      <span style="font-size:16px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></span>
-      <div style="flex:1">
-        <div style="font-size:12px;font-weight:700;color:var(--muted)">Rage Bet Fund</div>
-        <div style="font-size:11px;color:var(--dim)">Disponibile quando budget &lt; €10</div>
-      </div>
-      <span style="font-size:12px;color:var(--dim);letter-spacing:.15em">████</span>
-    </div>`;
-  }
-
-  if(S.budget.adj.length){
-    const logItems=S.budget.adj.slice().reverse().slice(0,20).map(a=>`<div class="trans-item">
-      <span style="font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.desc}</span>
-      <span style="font-size:11px;color:var(--muted);padding:0 6px;flex-shrink:0">${fd(a.t)}</span>
-      <span class="${a.v>=0?'tp':'tn'}" style="flex-shrink:0">${fe(a.v)}</span>
-    </div>`).join('');
-    h+=`<details class="card" style="padding:0;overflow:hidden">
-      <summary style="padding:14px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;list-style:none;user-select:none">
-        <span class="card-lbl" style="margin-bottom:0">Log Trasferimenti (${S.budget.adj.length})</span>
-        <span style="font-size:11px;color:var(--muted)">▼</span>
+    <div class="sep"></div>
+    <details class="fold">
+      <summary style="padding:0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;list-style:none;user-select:none">
+        <span class="ilbl" style="margin:0"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Aggiusta Budget Totale</span>
+        <span class="chev">▼</span>
       </summary>
-      <div style="padding:0 14px 14px">${logItems}</div>
-    </details>`;
-  }
+      <div style="padding-top:10px">
+        <div class="ig"><input type="number" id="bAdj" placeholder="0.00" step="0.01"></div>
+        <div class="btn-row">
+          <button class="btn btn-pos btn-sm" onclick="adjBud(1)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Aggiungi</button>
+          <button class="btn btn-neg btn-sm" onclick="adjBud(-1)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> Rimuovi</button>
+        </div>
+        <div style="font-size:11px;color:var(--dim);margin-top:7px">Correggi arrotondamenti o disallineamenti col saldo reale del conto gioco.</div>
+      </div>
+    </details>
+  </div>`;
 
   h+=`<div class="card"><div class="card-lbl">Dati</div>
   <div class="btn-row">
@@ -459,6 +477,7 @@ function renderMas(idx){
     h+=`<div class="btn-row" style="margin-top:6px">
       <button class="btn btn-ghost btn-sm" onclick="rstMas(${idx})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.5-5.8L20 8"/><path d="M20 4v4h-4"/><path d="M20 12a8 8 0 0 1-13.5 5.8L4 16"/><path d="M4 20v-4h4"/></svg> Riconfigura</button>
       ${isA?`<button class="btn btn-ns btn-sm" onclick="newStartMas(${idx})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.5-5.8L20 8"/><path d="M20 4v4h-4"/><path d="M20 12a8 8 0 0 1-13.5 5.8L4 16"/><path d="M4 20v-4h4"/></svg> New Start</button>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="openSimMas(${idx})"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6.5L5 18a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-8.5V3"/><path d="M7.5 14h9"/></svg> Simulazione</button>
     </div>`;
   }
   h+=`</div>`;
@@ -467,8 +486,8 @@ function renderMas(idx){
     const resa=r[m.p.V][m.p.N];
     const nextStk=C*sRatio(r,nRem,vRem);
 
-    h+=`<div class="card"><div class="card-lbl">Stato</div>
-    <div class="bnum ${C>=m.B0?'pos':'neg'}">${fe(C)}</div>
+    h+=`<div class="card ${C>=m.B0?'card-pos':'card-neg'}"><div class="card-lbl">Stato</div>
+    <div class="bnum ${C>=m.B0?'gradg':'gradr'}">${fe(C)}</div>
     <div style="font-size:12px;color:var(--muted);margin-top:2px">Iniziale: ${fe(m.B0)} · Resa: ${resa.toFixed(2)} · Target: ${fe(m.B0*resa)}</div>
     <div class="prog-bar" style="margin-top:10px"><div class="prog-fill" style="width:${Math.min(100,played/m.p.N*100)}%;background:${C>=m.B0?'var(--pos)':'var(--accent)'}"></div></div>
     <div class="g3" style="margin-top:10px">
@@ -675,6 +694,7 @@ function renderSc(){
     h+=`<div class="btn-row" style="margin-top:6px">
       <button class="btn btn-ghost btn-sm" onclick="rstSc()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 0 1 13.5-5.8L20 8"/><path d="M20 4v4h-4"/><path d="M20 12a8 8 0 0 1-13.5 5.8L4 16"/><path d="M4 20v-4h4"/></svg> Riconfigura</button>
       ${isX||isF?`<button class="btn btn-acc btn-sm" onclick="newSc()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5l2.5 5.3 5.8.8-4.2 4 1 5.7L12 16.6 6.9 19.3l1-5.7-4.2-4 5.8-.8z"/></svg> New</button>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="openSimSc()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6.5L5 18a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-8.5V3"/><path d="M7.5 14h9"/></svg> Simulazione</button>
     </div>`;
   }
   h+=`</div>`;
@@ -812,7 +832,50 @@ function renderFb(){
   const bets=S.fb.bets;
   const settled=bets.filter(b=>b.esito!==null);
   const wins=settled.filter(b=>b.esito==='W'),losses=settled.filter(b=>b.esito==='L');
-  const net=wins.reduce((a,b)=>a+b.p*b.q*.9,0)-settled.reduce((a,b)=>a+b.p,0);
+  const net=wins.reduce((a,b)=>a+b.p*b.q,0)-settled.reduce((a,b)=>a+b.p,0);
+
+  // riga "in attesa" riutilizzabile
+  const pendItem=b=>`<div class="fb-item">
+    <div class="fb-info">
+      <div class="fbt">@${b.q} — ${fe(b.p)}${b.antepost?'<span class="tag-ante">ANTEPOST</span>':''}</div>
+      ${b.desc?`<div class="fbs" style="color:var(--text);font-weight:500">${esc(b.desc)}</div>`:''}
+      <div class="fbs">Vincita: ${fe(b.p*b.q)} · netto: ${fe(b.p*b.q-b.p)}</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div style="display:flex;gap:3px">
+        <button class="btn btn-pos btn-xs" onclick="setFb('${b.id}','W')">W</button>
+        <button class="btn btn-neg btn-xs" onclick="setFb('${b.id}','L')">L</button>
+      </div>
+      <div style="display:flex;gap:3px">
+        <button class="btn btn-ghost btn-xs" onclick="editFbDesc('${b.id}')" title="Modifica descrizione"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h8"/><path d="M15.5 4.5a2 2 0 0 1 3 3L8 18l-4 1 1-4z"/></svg></button>
+        <button class="btn btn-ghost btn-xs" onclick="toggleFbAnte('${b.id}')" title="${b.antepost?'Sposta in attesa normale':'Sposta in antepost'}"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M12 13v3l2 1"/></svg></button>
+        <button class="btn btn-ghost btn-xs" onclick="delFb('${b.id}')" title="Elimina"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7v13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7"/></svg></button>
+      </div>
+    </div>
+  </div>`;
+
+  // riga storico (modificabile)
+  const settledItem=b=>{
+    const n=b.esito==='W'?(b.p*b.q-b.p):(-b.p);
+    return `<div class="fb-item">
+      <div class="fb-info">
+        <div class="fbt"><span class="bdg ${b.esito==='W'?'bw':'bl'}">${b.esito}</span> @${b.q} — ${fe(b.p)}${b.antepost?'<span class="tag-ante">ANTEPOST</span>':''}</div>
+        ${b.desc?`<div class="fbs" style="color:var(--text);font-weight:500">${esc(b.desc)}</div>`:''}
+        <div class="fbs">Net: ${fe(n)} · ${fd(b.t)}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;gap:3px">
+          <button class="btn ${b.esito==='W'?'btn-pos':'btn-ghost'} btn-xs" onclick="setFb('${b.id}','W')">W</button>
+          <button class="btn ${b.esito==='L'?'btn-neg':'btn-ghost'} btn-xs" onclick="setFb('${b.id}','L')">L</button>
+        </div>
+        <div style="display:flex;gap:3px">
+          <button class="btn btn-ghost btn-xs" onclick="editFbDesc('${b.id}')" title="Modifica descrizione"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h8"/><path d="M15.5 4.5a2 2 0 0 1 3 3L8 18l-4 1 1-4z"/></svg></button>
+          <button class="btn btn-ghost btn-xs" onclick="undoFb('${b.id}')" title="Riporta in attesa"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 0 2.3-5.6L4 8"/><path d="M4 4v4h4"/></svg></button>
+          <button class="btn btn-ghost btn-xs" onclick="delFb('${b.id}')" title="Elimina"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7v13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7"/></svg></button>
+        </div>
+      </div>
+    </div>`;
+  };
 
   let h=`<div class="stitle">Free Bet</div>`;
   if(settled.length){
@@ -827,40 +890,39 @@ function renderFb(){
     <div class="ig"><label class="ilbl">Puntata (€)</label><input type="number" id="fbP" placeholder="0.00" step="0.01" oninput="fbPrev()"></div>
     <div class="ig"><label class="ilbl">Quota</label><input type="number" id="fbQ" placeholder="1.50" step="0.01" oninput="fbPrev()"></div>
   </div>
+  <div class="ig"><label class="ilbl">Descrizione (opzionale)</label><input type="text" id="fbD" placeholder="es. Vincente Serie B · Capocannoniere · Passaggio turno…"></div>
+  <button type="button" id="fbAbtn" class="ante-toggle" style="margin-bottom:10px" onclick="this.classList.toggle('on')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M12 13v3l2 1"/></svg><span>Antepost / lunga scadenza</span></button>
   <div id="fbPv" style="font-size:13px;font-weight:600;color:var(--muted);margin-bottom:10px"></div>
   <button class="btn btn-acc btn-full" onclick="addFb()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Aggiungi</button>
   </div>`;
 
-  const pending=bets.filter(b=>b.esito===null);
-  if(pending.length){
-    h+=`<div class="card"><div class="card-lbl">In Attesa</div>`;
-    for(const b of pending.slice().reverse()){
-      h+=`<div class="fb-item">
-      <div class="fb-info"><div class="fbt">@${b.q} — ${fe(b.p)}</div>
-      <div class="fbs">Win lordo: ${fe(b.p*b.q)}</div></div>
-      <div style="display:flex;flex-direction:column;gap:3px">
-        <div style="display:flex;gap:3px">
-          <button class="btn btn-pos btn-xs" onclick="setFb('${b.id}','W')">W</button>
-          <button class="btn btn-neg btn-xs" onclick="setFb('${b.id}','L')">L</button>
-        </div>
-        <button class="btn btn-ghost btn-xs" onclick="delFb('${b.id}')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7v13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7"/></svg></button>
-      </div></div>`;
-    }
+  const pendNorm=bets.filter(b=>b.esito===null&&!b.antepost);
+  const pendAnte=bets.filter(b=>b.esito===null&&b.antepost);
+
+  if(pendNorm.length){
+    const stk=pendNorm.reduce((a,b)=>a+b.p,0);
+    h+=`<div class="card"><div class="card-lbl"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> In Attesa <span style="color:var(--dim);font-weight:500">· ${fe(stk)} in gioco</span></div>`;
+    for(const b of pendNorm.slice().reverse())h+=pendItem(b);
     h+=`</div>`;
   }
+  if(pendAnte.length){
+    const stk=pendAnte.reduce((a,b)=>a+b.p,0);
+    h+=`<details class="card fold" style="border-color:rgba(154,110,240,.3)">
+      <summary>
+        <span class="card-lbl" style="margin-bottom:0;color:var(--rage)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color:var(--rage)"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M12 13v3l2 1"/></svg> Antepost / Lunga Scadenza <span style="color:var(--dim);font-weight:500">· ${pendAnte.length} · ${fe(stk)} in gioco</span></span>
+        <span class="chev">▼</span>
+      </summary>
+      <div style="padding:0 14px 14px">${pendAnte.slice().reverse().map(pendItem).join('')}</div>
+    </details>`;
+  }
   if(settled.length){
-    h+=`<div class="card"><div class="card-lbl">Storico</div>`;
-    for(const b of settled.slice().reverse()){
-      const n=b.esito==='W'?(b.p*b.q*.9-b.p):(-b.p);
-      h+=`<div class="fb-item">
-      <div class="fb-info">
-        <div class="fbt"><span class="bdg ${b.esito==='W'?'bw':'bl'}">${b.esito}</span> @${b.q} — ${fe(b.p)}</div>
-        <div class="fbs">Net: ${fe(n)} · ${fd(b.t)}</div>
-      </div>
-      <button class="btn btn-del btn-xs" onclick="delFb('${b.id}')"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7v13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7"/></svg></button>
-      </div>`;
-    }
-    h+=`</div>`;
+    h+=`<details class="card fold">
+      <summary>
+        <span class="card-lbl" style="margin-bottom:0">Storico <span style="color:var(--dim);font-weight:500">· ${settled.length} scommesse</span></span>
+        <span class="chev">▼</span>
+      </summary>
+      <div style="padding:0 14px 14px">${settled.slice().reverse().map(settledItem).join('')}</div>
+    </details>`;
   }
   if(!bets.length)h+=`<div class="empty"><div style="font-size:32px;margin-bottom:8px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="4"/><circle cx="9" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="15" r="1.2" fill="currentColor" stroke="none"/><circle cx="15" cy="9" r="1.2" fill="currentColor" stroke="none"/><circle cx="9" cy="15" r="1.2" fill="currentColor" stroke="none"/></svg></div>Nessuna free bet registrata</div>`;
   h+=`<div style="height:16px"></div>`;
@@ -872,11 +934,13 @@ function renderFb(){
 // ══════════════════════════════════════════
 function setBud(){S.budget.iniziale=parseFloat(document.getElementById('bInp').value)||0;save();draw();}
 function resetAll(){if(!confirm('Resettare TUTTO?'))return;if(!confirm('Sicuro? Tutti i dati verranno persi.'))return;S=defS();save();draw();}
-function xferRage(){
-  const v=parseFloat(document.getElementById('rInp').value)||0,r=rageSaldo();
-  if(v<=0||v>r+.001){alert('Importo non valido (max '+fe(r)+')');return;}
-  S.rageBet.saldo-=v;S.rageBet.log.push({v,t:new Date().toISOString(),nota:'Trasf. Rage Bet'});
-  addAdj('rage',v,'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="10" r="6.5"/><path d="M8.5 16v3"/><path d="M12 16v3.5"/><path d="M15.5 16v3"/><circle cx="9.5" cy="10" r="1.4" fill="currentColor" stroke="none"/><circle cx="14.5" cy="10" r="1.4" fill="currentColor" stroke="none"/></svg> Rage Bet → Budget','rage_'+Date.now());
+function adjBud(sign){
+  const el=document.getElementById('bAdj');
+  const v=parseFloat(el?.value)||0;
+  if(v<=0){alert('Inserisci una cifra valida (> 0).');return;}
+  const amt=sign*v;
+  addAdj('manual',amt,sign>0?`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Aggiunta manuale`:`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg> Rimozione manuale`,'man_'+Date.now());
+  if(el)el.value='';
   save();draw();
 }
 
@@ -1115,21 +1179,143 @@ function xferSc(){
 }
 
 // ══════════════════════════════════════════
+//  SIMULAZIONE (non modifica nulla)
+// ══════════════════════════════════════════
+function closeSim(){const o=document.getElementById('simOvl');if(o)o.remove();}
+function openSimMas(idx){
+  const m=S.mas[idx];
+  const o=document.createElement('div');o.className='overlay';o.id='simOvl';
+  o.innerHTML=`<div class="modal"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div class="mt" style="margin:0"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6.5L5 18a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-8.5V3"/><path d="M7.5 14h9"/></svg> Simulazione — ${m.name}</div><button class="disc" onclick="closeSim()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+  <div class="alert ai" style="font-size:12px;margin-bottom:12px">Calcolo indipendente: non tocca il Masaniello in corso.</div>
+  <div class="ir">
+    <div class="ig"><label class="ilbl">Cassa (€)</label><input type="number" id="smB" value="${m.p.B}" step="0.01" oninput="simMas()"></div>
+    <div class="ig"><label class="ilbl">N Giocate</label><input type="number" id="smN" value="${m.p.N}" min="2" max="50" oninput="simMas()"></div>
+  </div>
+  <div class="ir">
+    <div class="ig"><label class="ilbl">V Vincite</label><input type="number" id="smV" value="${m.p.V}" min="1" oninput="simMas()"></div>
+    <div class="ig"><label class="ilbl">Quota Media</label><input type="number" id="smQ" value="${m.p.Q}" step="0.01" min="1.01" oninput="simMas()"></div>
+  </div>
+  <div id="simPv" class="pbox" style="margin-bottom:12px"></div>
+  <button class="btn btn-ghost btn-full" onclick="closeSim()">Chiudi</button>
+  </div>`;
+  document.body.appendChild(o);simMas();
+}
+function simMas(){
+  const el=document.getElementById('simPv');if(!el)return;
+  const B=parseFloat(document.getElementById('smB')?.value)||0;
+  const N=parseInt(document.getElementById('smN')?.value)||0;
+  const V=parseInt(document.getElementById('smV')?.value)||0;
+  const Q=parseFloat(document.getElementById('smQ')?.value)||0;
+  if(!B||!N||!V||!Q||V>N||Q<=1||B<=0){el.innerHTML='<div style="font-size:12px;color:var(--neg)">Parametri non validi (richiesti V≤N, Q>1, cassa>0)</div>';return;}
+  const r=buildR(N,V,Q),resa=r[V][N],cf=B*resa,g=cf-B,sr=sRatio(r,N,V);
+  let rows='',C=B,n=N,v=V,step=1;
+  while(v>0&&n>0){
+    const stk=stakeForQ(r,n,v,C,Q),win=stk*Q,after=C-stk+win;
+    rows+=`<tr><td style="padding:4px 8px;text-align:center;color:var(--muted)">${step}</td>
+      <td style="padding:4px 8px;text-align:center">${fe(stk)}</td>
+      <td style="padding:4px 8px;text-align:center;color:var(--pos)">${fe(win)}</td>
+      <td style="padding:4px 8px;text-align:center;font-weight:700">${fe(after)}</td></tr>`;
+    C=after;n--;v--;step++;
+  }
+  el.innerHTML=`<div class="g3" style="margin-bottom:10px">
+    <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">Resa</div><div style="font-size:20px;font-weight:800;color:var(--accent)">${resa.toFixed(2)}</div></div>
+    <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">Cassa Finale</div><div style="font-size:20px;font-weight:800;color:var(--pos)">${fe(cf)}</div></div>
+    <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">Guadagno</div><div style="font-size:20px;font-weight:800;${g>=0?'color:var(--pos)':'color:var(--neg)'}">${fe(g)}</div></div>
+  </div>
+  <div style="font-size:12px;color:var(--muted);margin-bottom:8px">Prima stake: <strong style="color:var(--text)">${fe(B*sr)}</strong> · Errori concessi: <strong style="color:var(--text)">${N-V}</strong></div>
+  <div style="font-size:11px;color:var(--dim);margin-bottom:4px">Percorso vincente (le ${V} vincite necessarie @${Q}):</div>
+  <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--border)">
+  <table style="width:100%;border-collapse:collapse;font-size:12px">
+  <thead><tr>
+    <th style="background:var(--s3);padding:5px 8px;color:var(--muted);font-size:10px;text-transform:uppercase">Vinc.</th>
+    <th style="background:var(--s3);padding:5px 8px;color:var(--muted);font-size:10px;text-transform:uppercase">Stake</th>
+    <th style="background:var(--s3);padding:5px 8px;color:var(--muted);font-size:10px;text-transform:uppercase">Vincita</th>
+    <th style="background:var(--s3);padding:5px 8px;color:var(--muted);font-size:10px;text-transform:uppercase">Cassa</th>
+  </tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+function openSimSc(){
+  const sc=S.sc;
+  const o=document.createElement('div');o.className='overlay';o.id='simOvl';
+  o.innerHTML=`<div class="modal"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div class="mt" style="margin:0"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6"/><path d="M10 3v6.5L5 18a2 2 0 0 0 1.8 3h10.4A2 2 0 0 0 19 18l-5-8.5V3"/><path d="M7.5 14h9"/></svg> Simulazione — Scalata</div><button class="disc" onclick="closeSim()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button></div>
+  <div class="alert ai" style="font-size:12px;margin-bottom:12px">Calcolo indipendente: non tocca la Scalata in corso.</div>
+  <div class="ir">
+    <div class="ig"><label class="ilbl">Budget Totale (€)</label><input type="number" id="ssB" value="${sc.p.B}" step="0.01" oninput="simSc()"></div>
+    <div class="ig"><label class="ilbl">Numero Step</label><input type="number" id="ssN" value="${sc.p.N}" min="2" max="50" oninput="simSc()"></div>
+  </div>
+  <div class="ir">
+    <div class="ig"><label class="ilbl">Quota Media</label><input type="number" id="ssQ" value="${sc.p.Q}" step="0.01" min="1.01" oninput="simSc()"></div>
+    <div class="ig"><label class="ilbl">Vite</label><input type="number" id="ssV" value="${sc.p.V||1}" min="1" max="10" step="1" oninput="simSc()"></div>
+  </div>
+  <div id="simPv" class="pbox" style="margin-bottom:12px"></div>
+  <button class="btn btn-ghost btn-full" onclick="closeSim()">Chiudi</button>
+  </div>`;
+  document.body.appendChild(o);simSc();
+}
+function simSc(){
+  const el=document.getElementById('simPv');if(!el)return;
+  const B=parseFloat(document.getElementById('ssB')?.value)||0;
+  const N=parseInt(document.getElementById('ssN')?.value)||0;
+  const Q=parseFloat(document.getElementById('ssQ')?.value)||0;
+  const V=Math.max(1,parseInt(document.getElementById('ssV')?.value)||1);
+  if(!B||!N||!Q||Q<=1||N<2){el.innerHTML='<div style="font-size:12px;color:var(--neg)">Parametri non validi (richiesti N≥2, Q>1)</div>';return;}
+  const vitaB=Math.round(B/V*100)/100,tgt=vitaB*Math.pow(Q,N);
+  let rows='',cc=vitaB;
+  for(let i=0;i<Math.min(N,20);i++){
+    const win=cc*Q;
+    rows+=`<tr><td style="padding:4px 8px;text-align:center;color:var(--muted)">${i+1}</td>
+      <td style="padding:4px 8px;text-align:center">${fe(cc)}</td>
+      <td style="padding:4px 8px;text-align:center;color:var(--pos)">${fe(win)}</td>
+      <td style="padding:4px 8px;text-align:center;font-weight:700">${fe(win)}</td></tr>`;
+    cc=win;
+  }
+  if(N>20)rows+=`<tr><td colspan="4" style="padding:6px;text-align:center;color:var(--dim);font-size:11px">…+${N-20} step</td></tr>`;
+  const vitaInfo=V>1?`<div style="font-size:11px;color:var(--accent);margin-bottom:8px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M7 11v3"/><path d="M5.5 12.5h3"/></svg> ${V} vite × ${fe(vitaB)} — totale: ${fe(B)}</div>`:'';
+  el.innerHTML=`<div class="g2" style="margin-bottom:10px">
+    <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">Target / Vita</div><div style="font-size:20px;font-weight:800;color:var(--pos)">${fe(tgt)}</div></div>
+    <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">${V>1?'Budget / Vita':'Guadagno'}</div><div style="font-size:20px;font-weight:800;color:var(--pos)">${V>1?fe(vitaB):fe(tgt-B)}</div></div>
+  </div>${vitaInfo}
+  <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--border)">
+  <table style="width:100%;border-collapse:collapse;font-size:12px">
+  <thead><tr>
+    <th style="background:var(--s3);padding:5px 8px;color:var(--muted);font-size:10px;text-transform:uppercase">#</th>
+    <th style="background:var(--s3);padding:5px 8px;color:var(--muted);font-size:10px;text-transform:uppercase">Puntata</th>
+    <th style="background:var(--s3);padding:5px 8px;color:var(--muted);font-size:10px;text-transform:uppercase">Vincita @${Q}</th>
+    <th style="background:var(--s3);padding:5px 8px;color:var(--muted);font-size:10px;text-transform:uppercase">Cassa</th>
+  </tr></thead><tbody>${rows}</tbody></table></div>`;
+}
+
+// ══════════════════════════════════════════
 //  ACTIONS — FREE BET
 // ══════════════════════════════════════════
 function fbPrev(){
   const p=parseFloat(document.getElementById('fbP')?.value)||0;
   const q=parseFloat(document.getElementById('fbQ')?.value)||0;
   const el=document.getElementById('fbPv');
-  if(el&&p>0&&q>1)el.innerHTML=`Budget: <strong class="pos">${fe(p*q*.9)}</strong> (Win netto: ${fe(p*q*.9-p)})`;
+  if(el&&p>0&&q>1)el.innerHTML=`Vincita potenziale: <strong class="pos">${fe(p*q)}</strong> (netto: ${fe(p*q-p)})`;
   else if(el)el.textContent='';
 }
 function addFb(){
   const p=parseFloat(document.getElementById('fbP').value)||0;
   const q=parseFloat(document.getElementById('fbQ').value)||0;
+  const desc=(document.getElementById('fbD')?.value||'').trim();
+  const antepost=document.getElementById('fbAbtn')?.classList.contains('on')||false;
   if(!p||p<=0||!q||q<=1){alert('Inserisci puntata e quota valide');return;}
-  S.fb.bets.push({id:uid(),p,q,esito:null,t:new Date().toISOString()});
+  S.fb.bets.push({id:uid(),p,q,esito:null,t:new Date().toISOString(),desc,antepost});
   save();draw();
+}
+function editFbDesc(id){
+  const b=S.fb.bets.find(b=>b.id===id);if(!b)return;
+  const v=prompt('Descrizione scommessa:',b.desc||'');
+  if(v===null)return;
+  b.desc=v.trim();save();draw();
+}
+function toggleFbAnte(id){
+  const b=S.fb.bets.find(b=>b.id===id);if(!b)return;
+  b.antepost=!b.antepost;save();draw();
+}
+function undoFb(id){
+  const b=S.fb.bets.find(b=>b.id===id);if(!b)return;
+  b.esito=null;b.st=null;save();draw();
 }
 function setFb(id,esito){const b=S.fb.bets.find(b=>b.id===id);if(!b)return;b.esito=esito;b.st=new Date().toISOString();save();draw();}
 function delFb(id){if(!confirm('Eliminare questa scommessa?'))return;S.fb.bets=S.fb.bets.filter(b=>b.id!==id);save();draw();}
@@ -1143,7 +1329,7 @@ function expC(){
   let c='Sezione,N,Stake,Quota,Esito,Vincita,Cassa Dopo,Data\n';
   S.mas.forEach((m,i)=>m.ev.forEach((e,j)=>{const v=e.esito==='W'?e.stk*e.q:0;c+=`Mas${i+1},${j+1},${e.stk?.toFixed(2)},${e.q},${e.esito},${v.toFixed(2)},${e.Cd?.toFixed(2)},${e.t||''}\n`;}));
   S.sc.steps.forEach((s,i)=>{if(s.esito){const v=s.esito==='W'?(s.Cp*s.q).toFixed(2):'0';c+=`Scalata,${i+1},${s.Cp?.toFixed(2)},${s.q},${s.esito},${v},${s.Cd?.toFixed(2)},\n`;}});
-  S.fb.bets.forEach(b=>{if(b.esito){const n=b.esito==='W'?(b.p*b.q*.9-b.p).toFixed(2):(-b.p).toFixed(2);c+=`FreeBet,,${b.p.toFixed(2)},${b.q},${b.esito},,${n},${b.t||''}\n`;}});
+  S.fb.bets.forEach(b=>{if(b.esito){const n=b.esito==='W'?(b.p*b.q-b.p).toFixed(2):(-b.p).toFixed(2);c+=`FreeBet,,${b.p.toFixed(2)},${b.q},${b.esito},,${n},${b.t||''}\n`;}});
   const b=new Blob([c],{type:'text/csv'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`bethub_${new Date().toISOString().slice(0,10)}.csv`;a.click();
 }
 
