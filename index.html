@@ -172,6 +172,9 @@ function defS(){return{
   fb:{bets:[]}
 };}
 let S=defS(),AT='bud';
+// Stato di apertura delle sezioni a comparsa (transiente, non salvato)
+let OPEN={};
+function setFold(id,open){OPEN[id]=open;}
 function load(){try{const d=localStorage.getItem(SK);if(d)S=JSON.parse(d);}catch(e){}}
 function save(){try{localStorage.setItem(SK,JSON.stringify(S));}catch(e){}}
 
@@ -253,16 +256,13 @@ function masLocked(){
   });
   return t;
 }
-// Somma "bloccata" nella scalata (cassa corrente + vite future riservate)
+// Somma "bloccata" nella scalata (cassa corrente non ancora trasferita)
 function scLocked(){
   const sc=S.sc;
   if(!sc||sc.stato==='config')return 0;
   const transferred=sc.runId&&S.budget.adj.some(a=>a.ref===`sf_${sc.runId}`);
   if(transferred)return 0;
-  let locked=scCassa();
-  const V=sc.vite||1,vitaAtt=sc.vitaAtt||1;
-  if(sc.stato==='attivo'&&V>1)locked+=Math.max(0,V-vitaAtt)*(sc.B0||0);
-  return locked;
+  return scCassa();
 }
 // Budget globale = liquido + masaniello + scalata
 function budGlobal(){return budTot()+masLocked()+scLocked();}
@@ -324,9 +324,9 @@ function buildOverview(){
       const stkNext=(m.stato==='attivo'&&vRem>0&&nRem>=vRem)?stakeForQ(r,nRem,vRem,C,m.p.Q):0;
       const lb=m.stato==='attivo'?'sa':m.stato==='finito'?'sf':'sx';
       const ic=m.stato==='attivo'?'<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="currentColor"/></svg>':m.stato==='finito'?'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>':'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6"/><path d="m15 9-6 6"/></svg>';
-      h+=`<div class="ov-card" onclick="go('m${idx}')">
+      h+=`<div class="ov-card ${C>=m.B0?'card-pos':'card-neg'}" onclick="go('m${idx}')">
         <div class="ov-head"><span class="ov-lbl">${m.name}</span><span class="sbdg ${lb}" style="font-size:9px">${ic}</span></div>
-        <div class="ov-num ${C>=m.B0?'pos':'neg'}">${fe(C)}</div>
+        <div class="ov-num ${C>=m.B0?'gradg':'gradr'}">${fe(C)}</div>
         <div class="ov-sub">${diff>=0?'+':''}${fe(diff)} <span style="color:${C>=m.B0?'var(--pos)':'var(--neg)'}">(${diff>=0?'+':''}${m.B0>0?(diff/m.B0*100).toFixed(1):0}%)</span> · ${W}V ${played-W}P</div>
         <div class="prog-bar" style="margin:5px 0 2px"><div class="prog-fill" style="width:${pct}%;background:${C>=m.B0?'var(--pos)':'var(--accent)'}"></div></div>
         ${stkNext>0?`<div class="ov-sub">Next: <strong style="color:var(--accent)">${fe(stkNext)}</strong></div>`:''}
@@ -392,7 +392,7 @@ function renderBud(){
   h+=`<div class="g2">
     <div class="card${isGold?' gold-card':''}" style="margin-bottom:0">
       <div class="card-lbl" style="margin-bottom:7px">Globale</div>
-      <div class="bnum ${isGold?'gold':(glob>=0?'pos':'neg')}" style="font-size:29px">${fe(glob)}</div>
+      <div class="bnum ${isGold?'gold':''}" style="font-size:29px${isGold?'':';color:var(--text)'}">${fe(glob)}</div>
     </div>
     <div class="card" style="margin-bottom:0">
       <div class="card-lbl" style="margin-bottom:7px">Totale</div>
@@ -412,7 +412,7 @@ function renderBud(){
       <button class="btn btn-del btn-sm" onclick="resetAll()"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9 7V5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/><path d="M6 7v13a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V7"/></svg> Reset Tutto</button>
     </div>
     <div class="sep"></div>
-    <details class="fold">
+    <details class="fold" id="fold-adj" ${OPEN['adj']?'open':''} ontoggle="setFold('adj',this.open)">
       <summary style="padding:0;display:flex;align-items:center;justify-content:space-between;cursor:pointer;list-style:none;user-select:none">
         <span class="ilbl" style="margin:0"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14"/><path d="M5 12h14"/></svg> Aggiusta Budget Totale</span>
         <span class="chev">▼</span>
@@ -667,12 +667,8 @@ function renderSc(){
   if(!isC){
     const lb=isF?'finito':isX?'fallito':'attivo';
     const ic=isF?'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m8.5 12 2.5 2.5 4.5-5"/></svg>':isX?'<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m9 9 6 6"/><path d="m15 9-6 6"/></svg>':'<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="12" r="6" fill="currentColor"/></svg>';
-    const V=sc.vite||1;
-    const vitaInfo=V>1?` &nbsp;<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M7 11v3"/><path d="M5.5 12.5h3"/><circle cx="15.5" cy="11.5" r=".9" fill="currentColor" stroke="none"/><circle cx="17.5" cy="14" r=".9" fill="currentColor" stroke="none"/></svg> Vita ${sc.vitaAtt||1}/${V}`:'';
     h+=`<div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
       <span class="sbdg ${isF?'sf':isX?'sx':'sa'}">${ic} ${lb.toUpperCase()}</span>
-      ${V>1?`<span style="font-size:12px;font-weight:700;color:var(--accent)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M7 11v3"/><path d="M5.5 12.5h3"/><circle cx="15.5" cy="11.5" r=".9" fill="currentColor" stroke="none"/><circle cx="17.5" cy="14" r=".9" fill="currentColor" stroke="none"/></svg> Vita ${sc.vitaAtt||1}/${V}</span>`:''}
-      ${V>1&&sc.vitaLog&&sc.vitaLog.length?`<span style="font-size:11px;color:var(--dim)">${sc.vitaLog.length} persa${sc.vitaLog.length>1?'':'e'}</span>`:''}
     </div>`;
   }
 
@@ -681,10 +677,7 @@ function renderSc(){
     <div class="ig"><label class="ilbl">Budget Totale (€)</label><input type="number" id="scB" value="${sc.p.B}" step="0.01" ${!isC?'disabled':''} oninput="scPrev()"></div>
     <div class="ig"><label class="ilbl">Numero Step</label><input type="number" id="scN" value="${sc.p.N}" min="2" max="50" ${!isC?'disabled':''} oninput="scPrev()"></div>
   </div>
-  <div class="ir">
-    <div class="ig"><label class="ilbl">Quota Media (default step)</label><input type="number" id="scQ" value="${sc.p.Q}" step="0.01" min="1.01" ${!isC?'disabled':''} oninput="scPrev()"></div>
-    <div class="ig"><label class="ilbl"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M7 11v3"/><path d="M5.5 12.5h3"/><circle cx="15.5" cy="11.5" r=".9" fill="currentColor" stroke="none"/><circle cx="17.5" cy="14" r=".9" fill="currentColor" stroke="none"/></svg> Vite (budget ÷ vite)</label><input type="number" id="scV" value="${sc.p.V||1}" min="1" max="10" step="1" ${!isC?'disabled':''} oninput="scPrev()"></div>
-  </div>`;
+  <div class="ig"><label class="ilbl">Quota Media (default step)</label><input type="number" id="scQ" value="${sc.p.Q}" step="0.01" min="1.01" ${!isC?'disabled':''} oninput="scPrev()"></div>`;
 
   if(isC){
     h+=`<div id="scPv" class="pbox"><div style="font-size:12px;color:var(--muted)">Compila i parametri…</div></div>
@@ -786,22 +779,19 @@ function scPrev(){
   const B=parseFloat(document.getElementById('scB')?.value)||0;
   const N=parseInt(document.getElementById('scN')?.value)||0;
   const Q=parseFloat(document.getElementById('scQ')?.value)||0;
-  const V=Math.max(1,parseInt(document.getElementById('scV')?.value)||1);
   if(!B||!N||!Q||Q<=1){el.innerHTML='<div style="font-size:12px;color:var(--dim)">Parametri non validi</div>';return;}
-  const vitaB=Math.round(B/V*100)/100;
-  const tgt=vitaB*Math.pow(Q,N);
-  let vitaInfo=V>1?`<div style="font-size:11px;color:var(--accent);margin-bottom:8px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M7 11v3"/><path d="M5.5 12.5h3"/><circle cx="15.5" cy="11.5" r=".9" fill="currentColor" stroke="none"/><circle cx="17.5" cy="14" r=".9" fill="currentColor" stroke="none"/></svg> ${V} vite × ${fe(vitaB)} — totale: ${fe(B)}</div>`:'';
+  const tgt=B*Math.pow(Q,N);
   let tbl=`<div class="g2" style="margin-bottom:10px">
-    <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">Target / Vita</div><div style="font-size:20px;font-weight:800;color:var(--pos)">${fe(tgt)}</div></div>
-    <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">${V>1?'Budget / Vita':'Guadagno'}</div><div style="font-size:20px;font-weight:800;color:var(--pos)">${V>1?fe(vitaB):fe(tgt-B)}</div></div>
-  </div>${vitaInfo}
+    <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">Target finale</div><div style="font-size:20px;font-weight:800;color:var(--pos)">${fe(tgt)}</div></div>
+    <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">Guadagno</div><div style="font-size:20px;font-weight:800;color:var(--pos)">${fe(tgt-B)}</div></div>
+  </div>
   <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--border)">
   <table style="width:100%;border-collapse:collapse;font-size:12px">
   <thead><tr><th style="background:var(--s3);padding:5px 8px;color:var(--muted);font-weight:700;text-transform:uppercase;font-size:10px">#</th>
   <th style="background:var(--s3);padding:5px 8px;color:var(--muted);font-weight:700;text-transform:uppercase;font-size:10px">Puntata</th>
   <th style="background:var(--s3);padding:5px 8px;color:var(--muted);font-weight:700;text-transform:uppercase;font-size:10px">Vincita @${Q}</th>
   <th style="background:var(--s3);padding:5px 8px;color:var(--muted);font-weight:700;text-transform:uppercase;font-size:10px">Cassa</th></tr></thead><tbody>`;
-  let cc=vitaB;
+  let cc=B;
   for(let i=0;i<Math.min(N,20);i++){
     const win=cc*Q;
     tbl+=`<tr><td style="padding:4px 8px;text-align:center;color:var(--muted);border-bottom:1px solid rgba(255,255,255,.04)">${i+1}</td>
@@ -907,7 +897,7 @@ function renderFb(){
   }
   if(pendAnte.length){
     const stk=pendAnte.reduce((a,b)=>a+b.p,0);
-    h+=`<details class="card fold" style="border-color:rgba(154,110,240,.3)">
+    h+=`<details class="card fold" id="fold-ante" ${OPEN['ante']?'open':''} ontoggle="setFold('ante',this.open)" style="border-color:rgba(154,110,240,.3)">
       <summary>
         <span class="card-lbl" style="margin-bottom:0;color:var(--rage)"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="color:var(--rage)"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 2v4"/><path d="M16 2v4"/><path d="M12 13v3l2 1"/></svg> Antepost / Lunga Scadenza <span style="color:var(--dim);font-weight:500">· ${pendAnte.length} · ${fe(stk)} in gioco</span></span>
         <span class="chev">▼</span>
@@ -916,7 +906,7 @@ function renderFb(){
     </details>`;
   }
   if(settled.length){
-    h+=`<details class="card fold">
+    h+=`<details class="card fold" id="fold-storico" ${OPEN['storico']?'open':''} ontoggle="setFold('storico',this.open)">
       <summary>
         <span class="card-lbl" style="margin-bottom:0">Storico <span style="color:var(--dim);font-weight:500">· ${settled.length} scommesse</span></span>
         <span class="chev">▼</span>
@@ -1097,15 +1087,11 @@ function genSc(){
   const B=parseFloat(document.getElementById('scB').value)||10;
   const N=parseInt(document.getElementById('scN').value)||10;
   const Q=parseFloat(document.getElementById('scQ').value)||1.50;
-  const V=Math.max(1,parseInt(document.getElementById('scV')?.value)||1);
   if(B<=0||N<2||Q<=1){alert('Parametri non validi');return;}
-  const vitaB=Math.round(B/V*100)/100;
   const rid=Date.now();
-  S.sc.p={B,N,Q,V};S.sc.B0=vitaB;S.sc.stato='attivo';S.sc.runId=rid;
-  S.sc.vite=V;S.sc.vitaAtt=1;S.sc.vitaLog=[];
+  S.sc.p={B,N,Q};S.sc.B0=B;S.sc.stato='attivo';S.sc.runId=rid;
   S.sc.steps=Array.from({length:N},(_,i)=>({id:i,q:Q,esito:null,isCheckpoint:false,pr:0,Cp:null,Cd:null}));
-  const vitaLbl=V>1?` (${V} vite × ${fe(vitaB)})`:' ';
-  addAdj('sc',-B,`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l3 3 7-7"/><path d="M15 7h5v5"/></svg> Scalata avviata${vitaLbl}`,`sg_${rid}`);
+  addAdj('sc',-B,`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 17 10 11l3 3 7-7"/><path d="M15 7h5v5"/></svg> Scalata avviata`,`sg_${rid}`);
   save();draw();
 }
 function rstSc(){
@@ -1140,20 +1126,7 @@ function regSt(i,esito){
     s.Cd=dopo;
   }else{
     s.Cd=0;
-    const V=sc.vite||1;
-    if(V>1&&sc.vitaAtt<V){
-      // Record this vita and start the next one
-      if(!sc.vitaLog)sc.vitaLog=[];
-      sc.vitaLog.push({vita:sc.vitaAtt,esito:'fallita',step:i+1});
-      sc.vitaAtt++;
-      const vitaB=Math.round(sc.p.B/V*100)/100;
-      sc.B0=vitaB;
-      sc.stato='attivo';
-      sc.runId=Date.now();
-      sc.steps=Array.from({length:sc.p.N},(_,j)=>({id:j,q:sc.p.Q,esito:null,isCheckpoint:false,pr:0,Cp:null,Cd:null}));
-    }else{
-      sc.stato='fallita';
-    }
+    sc.stato='fallita';
   }
   s.esito=esito;
   if(esito==='W'&&i===sc.steps.length-1)sc.stato='finita';
@@ -1243,8 +1216,8 @@ function openSimSc(){
     <div class="ig"><label class="ilbl">Numero Step</label><input type="number" id="ssN" value="${sc.p.N}" min="2" max="50" oninput="simSc()"></div>
   </div>
   <div class="ir">
+    <div class="ig"><label class="ilbl">Numero Step</label><input type="number" id="ssN" value="${sc.p.N}" min="2" max="50" oninput="simSc()"></div>
     <div class="ig"><label class="ilbl">Quota Media</label><input type="number" id="ssQ" value="${sc.p.Q}" step="0.01" min="1.01" oninput="simSc()"></div>
-    <div class="ig"><label class="ilbl">Vite</label><input type="number" id="ssV" value="${sc.p.V||1}" min="1" max="10" step="1" oninput="simSc()"></div>
   </div>
   <div id="simPv" class="pbox" style="margin-bottom:12px"></div>
   <button class="btn btn-ghost btn-full" onclick="closeSim()">Chiudi</button>
@@ -1256,10 +1229,9 @@ function simSc(){
   const B=parseFloat(document.getElementById('ssB')?.value)||0;
   const N=parseInt(document.getElementById('ssN')?.value)||0;
   const Q=parseFloat(document.getElementById('ssQ')?.value)||0;
-  const V=Math.max(1,parseInt(document.getElementById('ssV')?.value)||1);
   if(!B||!N||!Q||Q<=1||N<2){el.innerHTML='<div style="font-size:12px;color:var(--neg)">Parametri non validi (richiesti N≥2, Q>1)</div>';return;}
-  const vitaB=Math.round(B/V*100)/100,tgt=vitaB*Math.pow(Q,N);
-  let rows='',cc=vitaB;
+  const tgt=B*Math.pow(Q,N);
+  let rows='',cc=B;
   for(let i=0;i<Math.min(N,20);i++){
     const win=cc*Q;
     rows+=`<tr><td style="padding:4px 8px;text-align:center;color:var(--muted)">${i+1}</td>
@@ -1269,11 +1241,10 @@ function simSc(){
     cc=win;
   }
   if(N>20)rows+=`<tr><td colspan="4" style="padding:6px;text-align:center;color:var(--dim);font-size:11px">…+${N-20} step</td></tr>`;
-  const vitaInfo=V>1?`<div style="font-size:11px;color:var(--accent);margin-bottom:8px"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="11" rx="4"/><path d="M7 11v3"/><path d="M5.5 12.5h3"/></svg> ${V} vite × ${fe(vitaB)} — totale: ${fe(B)}</div>`:'';
   el.innerHTML=`<div class="g2" style="margin-bottom:10px">
-    <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">Target / Vita</div><div style="font-size:20px;font-weight:800;color:var(--pos)">${fe(tgt)}</div></div>
-    <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">${V>1?'Budget / Vita':'Guadagno'}</div><div style="font-size:20px;font-weight:800;color:var(--pos)">${V>1?fe(vitaB):fe(tgt-B)}</div></div>
-  </div>${vitaInfo}
+    <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">Target finale</div><div style="font-size:20px;font-weight:800;color:var(--pos)">${fe(tgt)}</div></div>
+    <div><div style="font-size:10px;color:var(--muted);text-transform:uppercase;margin-bottom:2px">Guadagno</div><div style="font-size:20px;font-weight:800;color:var(--pos)">${fe(tgt-B)}</div></div>
+  </div>
   <div style="overflow-x:auto;border-radius:6px;border:1px solid var(--border)">
   <table style="width:100%;border-collapse:collapse;font-size:12px">
   <thead><tr>
